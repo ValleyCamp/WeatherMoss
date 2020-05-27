@@ -7,8 +7,8 @@ defmodule WeatherMoss.Application do
 
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
-      WeatherMoss.Repo,
+      # Start the Ecto repository for the Meteobridge DB
+      WeatherMoss.MeteobridgeRepo,
       # Start the Telemetry supervisor
       WeatherMossWeb.Telemetry,
       # Start the PubSub system

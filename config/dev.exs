@@ -1,13 +1,14 @@
 use Mix.Config
 
-# Configure your database
-config :weather_moss, WeatherMoss.Repo,
-  username: "root",
+# Configure the MeteoBridge data repo (Should be read-only data)
+config :weather_moss, WeatherMoss.MeteobridgeRepo,
+  username: "weathermoss",
   password: "",
-  database: "weather_moss_dev",
+  database: "meteobridge",
+  socket: "/run/mysqld/mysqld.sock",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  pool_size: 10 
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

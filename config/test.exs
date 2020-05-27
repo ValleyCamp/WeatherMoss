@@ -5,10 +5,10 @@ use Mix.Config
 # The MIX_TEST_PARTITION environment variable can be used
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
-config :weather_moss, WeatherMoss.Repo,
-  username: "root",
+config :weather_moss, WeatherMoss.MeteobridgeRepo,
+  username: "weathermoss",
   password: "",
-  database: "weather_moss_test#{System.get_env("MIX_TEST_PARTITION")}",
+  database: "meteobridge_test#{System.get_env("MIX_TEST_PARTITION")}",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 

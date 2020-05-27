@@ -32,10 +32,10 @@ defmodule WeatherMossWeb.ConnCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(WeatherMoss.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(WeatherMoss.MeteobridgeRepo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(WeatherMoss.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(WeatherMoss.MeteobridgeRepo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}

@@ -18,7 +18,7 @@ defmodule WeatherMoss.DataCase do
 
   using do
     quote do
-      alias WeatherMoss.Repo
+      alias WeatherMoss.MeteobridgeRepo
 
       import Ecto
       import Ecto.Changeset
@@ -28,10 +28,10 @@ defmodule WeatherMoss.DataCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(WeatherMoss.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(WeatherMoss.MeteobridgeRepo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(WeatherMoss.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(WeatherMoss.MeteobridgeRepo, {:shared, self()})
     end
 
     :ok
