@@ -14,9 +14,10 @@ defmodule WeatherMoss.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: WeatherMoss.PubSub},
       # Start the Endpoint (http/https)
-      WeatherMossWeb.Endpoint
+      WeatherMossWeb.Endpoint,
       # Start a worker by calling: WeatherMoss.Worker.start_link(arg)
       # {WeatherMoss.Worker, arg}
+      WeatherMoss.Meteobridge
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
