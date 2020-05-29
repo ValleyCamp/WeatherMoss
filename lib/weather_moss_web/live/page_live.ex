@@ -3,7 +3,9 @@ defmodule WeatherMossWeb.PageLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, query: "", results: %{})}
+    if connected?(socket), do: :timer.send_interval(15000, self(), :update)
+    {:ok, mb_latest} = WeatherMoss.Meteobridge.latest
+    {:ok, assign(socket, query: "", results: %{}, meteobridge_latest: mb_latest)}
   end
 
   @impl true
@@ -35,5 +37,11 @@ defmodule WeatherMossWeb.PageLive do
         String.starts_with?(app, query) and not List.starts_with?(desc, ~c"ERTS"),
         into: %{},
         do: {app, vsn}
+  end
+
+  def handle_info(:update, socket) do
+    {:ok, mb_latest} = WeatherMoss.Meteobridge.latest
+
+    {:noreply, assign(socket, meteobridge_latest: mb_latest)}
   end
 end
