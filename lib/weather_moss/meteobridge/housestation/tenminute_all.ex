@@ -3,6 +3,8 @@ defmodule WeatherMoss.Meteobridge.Housestation.TenminuteAll do
 
   @primary_key {:id, :id, autogenerate: true}
 
+  # The SQL Query we use to insert this data from the Meteobridge services interface:
+  # INSERT INTO `housestation_10min_all` (`DateTime`, `TempOutCur`, `HumOutCur`, `PressCur`, `DewCur`, `HeatIdxCur`, `WindChillCur`, `TempInCur`, `HumInCur`, `WindSpeedCur`, `WindAvgSpeedCur`, `WindDirCur`, `WindDirCurEng`, `WindGust10`, `WindDirAvg10`, `WindDirAvg10Eng`, `UVAvg10`, `UVMax10`, `SolarRadAvg10`, `SolarRadMax10`, `RainRateCur`, `RainDay`, `RainYest`, `RainMonth`, `RainYear`) VALUES ('[YYYY]-[MM]-[DD] [hh]:[mm]:[ss]', '[th0temp-act=F]', '[th0hum-act]', '[thb0seapress-act=inHg.2]', '[th0dew-act=F]', '[th0heatindex-act=F]', '[wind0chill-act=F]', '[thb0temp-act=F]', '[thb0hum-act]', '[wind0wind-act=mph]', '[wind0avgwind-act=mph]', '[wind0dir-act]', '[wind0dir-act=endir]', '[wind0wind-max10=mph]', '[wind0dir-avg10]', '[wind0dir-avg10=endir]', '[uv0index-avg10]', '[uv0index-max10]', '[sol0rad-avg10]', '[sol0rad-max10]', '[rain0rate-act=in.2]', '[rain0total-daysum=in.2]', '[rain0total-ydaysum=in.2]', '[rain0total-monthsum=in.2]', '[rain0total-yearsum=in.2]')
   schema "housestation_10min_all" do
     field :dateTime, :utc_datetime
     field :tempOutCur, :decimal
