@@ -1,6 +1,128 @@
 /* This file is for your main application css. */
-@import "./phoenix.css";
 @import "../node_modules/nprogress/nprogress.css";
+
+$content-width: 960px;
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #f0f0ff;
+}
+
+.layout-wrapper{
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  margin: 0;
+  padding: 0;
+
+  .logo-title-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    padding-top: 20px;
+    padding-bottom: 2em;
+    margin-bottom: 0;
+    background: #0a3d11;
+    a.weathermoss-logo {
+      display: inline-block;
+    }
+    h1 {
+      display: inline-block;
+      color: #ffffff;
+      text-shadow: 2px 2px 0 rgba(200,200,200,0.5);
+      padding-left: 10px;
+      padding-right: 10px;
+      margin: 0;
+      font-size: 2.5rem;
+    }
+    .tagline {
+      display: inline-block;
+      font-size: 0.75rem;
+      color: #cccccc;
+      line-height: 1.3rem;
+    }
+  }
+
+  nav {
+    padding: 0;
+    width: $content-width;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 50;
+    position: relative;
+    top:0px;
+    transform: translateY(-2.25rem);
+    margin-top: 0;
+    margin-bottom: -4rem;
+    ul {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      margin-left: 10%;
+      margin-right: 10%;
+      padding-left: 20px;
+      padding-right: 20px;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
+      list-style: none;
+
+      li {
+        &:hover, &:focus {
+          background: #cfcfcf;
+        }
+        padding: 10px;
+      }
+      a {
+        text-decoration: none;
+        &:hover, &:focus {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+.content-wrapper {
+  width: $content-width;
+  padding-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+main {
+}
+
+
+/* Flex Definitons */
+.flex-container {
+  display: flex !important;
+}
+
+.flex-row {
+  flex-direction: row !important;
+  -webkit-box-orient: horizontal !important;
+
+  .flex-column {
+    -webkit-box-direction: normal !important;
+  }
+}
+
+.flex-column {
+  flex-direction: column !important;
+  -webkit-box-orient: vertical !important;
+
+  .flex-row {
+    -webkit-box-direction: normal !important;
+  }
+}
+
+
+
 
 /* LiveView specific classes for your customizations */
 .invalid-feedback {
