@@ -15,7 +15,7 @@ defmodule WeatherMoss.Meteobridge do
   @sweep_after :timer.seconds(15)
 
   ## GenServer Client
-  def start_link(opts \\ []) do
+  def start_link([]) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
@@ -43,6 +43,7 @@ defmodule WeatherMoss.Meteobridge do
   ## GenServer Server
   
   def init(_) do
+    # TODO: Should this be a :protected table?
     :ets.new(@table, [:set, :public, :named_table, read_concurrency: true, write_concurrency: false])
     schedule_sweep()
     {:ok, %{}}
@@ -51,20 +52,23 @@ defmodule WeatherMoss.Meteobridge do
   # TODO: If the Meteobridge device inserts slowly, this may run before the next datapoint is inserted, so we may
   # be perpetually 10 minutes behind in our data. Investigate this
   def handle_info(:sweep, state) do
-    now = DateTime.utc_now
+    now = DateTime.utc_now()
 
     case :ets.lookup(@table, :sweep_tenminute_all_at) do
-      [{_, sweep_target}] when now > sweep_target  -> delkeys([:tenminute_all, :sweep_tenminute_all_at])
+      [sweep_tenminute_all_at: sweep_target] ->
+        if DateTime.compare(now, sweep_target) == :gt, do: delkeys([:tenminute_all, :sweep_tenminute_all_at])
       [] -> :noop
     end
 
     case :ets.lookup(@table, :sweep_fifteensec_raintemp_at) do
-      [{_, sweep_target}] when now > sweep_target  -> delkeys([:fifteensec_raintemp, :sweep_fifteensec_raintemp_at])
+      [sweep_fifteensec_raintemp_at: sweep_target] ->
+        if DateTime.compare(now, sweep_target) == :gt, do: delkeys([:fifteensec_raintemp, :sweep_fifteensec_raintemp_at])
       [] -> :noop
     end
 
     case :ets.lookup(@table, :sweep_fifteensec_wind_at) do
-      [{_, sweep_target}] when now > sweep_target  -> delkeys([:fifteensec_wind, :sweep_fifteensec_wind_at])
+      [sweep_fifteensec_wind_at: sweep_target] ->
+        if DateTime.compare(now, sweep_target) == :gt, do: delkeys([:fifteensec_wind, :sweep_fifteensec_wind_at])
       [] -> :noop
     end
 
@@ -85,7 +89,7 @@ defmodule WeatherMoss.Meteobridge do
   defp update_tenminute_all do
     tenminute_all = WeatherMoss.MeteobridgeRepo.one(from x in WeatherMoss.Meteobridge.Housestation.TenminuteAll, order_by: [desc: x.id], limit: 1)   
     :ets.insert(@table, {:tenminute_all, tenminute_all})
-    :ets.insert(@table, {:sweep_tenminute_all_at, DateTime.add(tenminute_all.dateTime, 600, :second)})
+    :ets.insert(@table, {:sweep_tenminute_all_at, DateTime.add(tenminute_all.dateTime, 600)})
     tenminute_all
   end
 
@@ -99,7 +103,7 @@ defmodule WeatherMoss.Meteobridge do
   defp update_fifteensec_wind do
     fifteensec_wind = WeatherMoss.MeteobridgeRepo.one(from x in WeatherMoss.Meteobridge.Housestation.FifteensecondWind, order_by: [desc: x.id], limit: 1)   
     :ets.insert(@table, {:fifteensec_wind, fifteensec_wind})
-    :ets.insert(@table, {:sweep_fifteensec_wind_at, DateTime.add(fifteensec_wind.dateTime, 15, :second)})
+    :ets.insert(@table, {:sweep_fifteensec_wind_at, DateTime.add(fifteensec_wind.dateTime, 15)})
     fifteensec_wind
   end
 
