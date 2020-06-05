@@ -33,7 +33,7 @@ header {
     h1 {
       display: inline-block;
       color: #ffffff;
-      text-shadow: 2px 2px 0 rgba(200,200,200,0.5);
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
       padding-left: 10px;
       padding-right: 10px;
       margin: 0;
@@ -95,6 +95,27 @@ header {
 }
 
 main {
+}
+
+/* WeatherMossWeb.Meteobridge */
+.mbdash_widget {
+  border: 2px solid #cccccc;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
+  padding: 10px;
+}
+
+.gauge-bg {
+  fill: transparent;
+  stroke: #cccccc;
+  stroke-width: 24;
+  stroke-linecap: round;
+}
+
+.gauge-fg-generic {
+  fill: transparent;
+  stroke-width: 22px;
+  stroke-linecap: round;
 }
 
 

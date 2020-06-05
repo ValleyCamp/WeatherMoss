@@ -8,7 +8,8 @@
 use Mix.Config
 
 config :weather_moss,
-  ecto_repos: [WeatherMoss.MeteobridgeRepo]
+  ecto_repos: [WeatherMoss.MeteobridgeRepo],
+  site_tz: "America/Los_Angeles"
 
 # Configures the endpoint
 config :weather_moss, WeatherMossWeb.Endpoint,

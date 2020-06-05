@@ -1,10 +1,10 @@
 <h2 style="text-align: center;">Current Weather at Valley Camp</h2>
 
-<section style="display:flex; flex-direction: row; justify-content: space-between;">
-  <article >
+<section style="display:flex; flex-direction: row; justify-content: space-around;">
+  <article style="width: 250px;" class="mbdash_widget">
     <%= live_component @socket, WeatherMossWeb.MeteobridgeFifteenSecondWindComponent, latest: @meteobridge_latest.fifteensec_wind %>
   </article>
-  <article class="flex-column">
+  <article style="width: 450px;" class="mbdash_widget">
     <%= live_component @socket, WeatherMossWeb.MeteobridgeFifteenSecondRainAndTempComponent, latest: @meteobridge_latest.fifteensec_raintemp %>
   </article>
 </section>
