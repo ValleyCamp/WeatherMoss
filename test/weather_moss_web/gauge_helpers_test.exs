@@ -1,5 +1,6 @@
 defmodule WeatherMossWeb.GagueArcTest do
   alias WeatherMossWeb.GaugeArc
+  alias WeatherMossWeb.GaugeLine
 
   use ExUnit.Case
  # doctest GaugeArc
@@ -122,6 +123,81 @@ defmodule WeatherMossWeb.GagueArcTest do
 
   test "raw SVG dasharray attr string is generated correctly for arbitrary fill percentage from 0-50" do
 
+  end
+
+  test "x value for scale value is calculated correctly" do
+    # Compare to calculated known values for arbitrary line
+    line1 = %GaugeLine{scaleTopVal: 100, scaleBottomVal: 0, fillTopVal: 100, fillBottomVal: 0, topX: 10, topY: 25, height: 100}
+    assert GaugeLine.y_for_scale_value(line1, 100) == 25 
+    assert GaugeLine.y_for_scale_value(line1, 75) == 50
+    assert GaugeLine.y_for_scale_value(line1, 50) == 75
+    assert GaugeLine.y_for_scale_value(line1, 25) == 100
+    assert GaugeLine.y_for_scale_value(line1, 0) == 125
+
+    # Compare to calculated known values for arbitrary line
+    line2 = %GaugeLine{scaleTopVal: 80, scaleBottomVal: 20, fillTopVal: 80, fillBottomVal: 20, topX: 10, topY: 25, height: 100}
+    assert GaugeLine.y_for_scale_value(line2, 80) == 25 
+    assert GaugeLine.y_for_scale_value(line2, 65) == 50
+    assert GaugeLine.y_for_scale_value(line2, 50) == 75
+    assert GaugeLine.y_for_scale_value(line2, 35) == 100
+    assert GaugeLine.y_for_scale_value(line2, 20) == 125
+  end
+
+  test "x value for scale correctly throws error if given a scaleValue outside the gauge range" do
+    line = %GaugeLine{scaleTopVal: 90, scaleBottomVal: 10}
+    assert_raise ArgumentError, ~r/^Requested scaleValue outside of scale range/, fn ->
+      GaugeLine.y_for_scale_value(line, 9.999)
+    end
+    assert_raise ArgumentError, ~r/^Requested scaleValue outside of scale range/, fn ->
+      GaugeLine.y_for_scale_value(line, 90.001)
+    end
+  end
+
+  test "length_between_scale_value throws error if requested values outside of scale" do
+    line = %GaugeLine{scaleTopVal: 90, scaleBottomVal: 10}
+    # Start val below gauge scale
+    assert_raise ArgumentError, ~r/^Requested starting value below scale range/, fn ->
+      GaugeLine.length_between_scale_values(line, 0, 50)
+    end
+    # start val above gauge end
+    assert_raise ArgumentError, ~r/^Requested starting value above scale range/, fn ->
+      GaugeLine.length_between_scale_values(line, 100, 50)
+    end
+    # End val below gauge start
+    assert_raise ArgumentError, ~r/^Requested ending value below scale range/, fn ->
+      GaugeLine.length_between_scale_values(line, 50, 0)
+    end
+    # End val above gauge end
+    assert_raise ArgumentError, ~r/^Requested ending value above scale range/, fn ->
+      GaugeLine.length_between_scale_values(line, 50, 100)
+    end
+  end
+
+  test "length_between_scale_value calculates correctly" do
+    # Compare to calculated known values for arbitrary line
+    line1 = %GaugeLine{scaleTopVal: 100, scaleBottomVal: 0, fillTopVal: 100, fillBottomVal: 0, topX: 10, topY: 25, height: 100}
+    assert GaugeLine.length_between_scale_values(line1, 0, 100) ==  100
+    assert GaugeLine.length_between_scale_values(line1, 0, 50) == 50 
+    assert GaugeLine.length_between_scale_values(line1, 25, 50) == 25 
+    assert GaugeLine.length_between_scale_values(line1, 0, 1) ==  1
+    #
+    # Compare to calculated known values for arbitrary line
+    line2 = %GaugeLine{scaleTopVal: 80, scaleBottomVal: 20, fillTopVal: 80, fillBottomVal: 20, topX: 10, topY: 25, height: 100}
+    assert GaugeLine.length_between_scale_values(line2, 20, 80) ==  100
+    assert GaugeLine.length_between_scale_values(line2, 20, 50) == 50 
+    assert GaugeLine.length_between_scale_values(line2, 35, 50) == 25
+    assert GaugeLine.length_between_scale_values(line2, 35, 65) == 50
+  end
+
+  test "raw_svg_dasharray_attr_string generates correct dash attributes" do
+    line1 = %GaugeLine{scaleTopVal: 100, scaleBottomVal: 0, fillTopVal: 100, fillBottomVar: 0}
+    assert GaugeLine.raw_svg_dasharray_attr_string(line1) == ""
+    # Compare to calculated known values for arbitrary line
+    line2 = %GaugeLine{scaleTopVal: 100, scaleBottomVal: 0, fillTopVal: 100, fillBottomVal: 0, topX: 10, topY: 25, height: 100}
+    assert GaugeLine.raw_svg_dasharray_attr_string(line2) == " stroke-dashoffset=\"-0\" stroke-dasharray=\"#{line1.height} 0\" "
+    #assert GaugeLine.length_between_scale_values(line1, 0, 50) == 50 
+    #assert GaugeLine.length_between_scale_values(line1, 25, 50) == 25 
+    #assert GaugeLine.length_between_scale_values(line1, 0, 1) ==  1
   end
 
 end

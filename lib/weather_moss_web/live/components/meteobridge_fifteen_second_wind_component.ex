@@ -41,7 +41,7 @@ defmodule WeatherMossWeb.MeteobridgeFifteenSecondWindComponent do
       <text text-anchor="middle" x="125" y="115" style="font-weight: normal; font-size: 1rem; opacity: <%= wind_transparency.text %>;">at</text>
       <text text-anchor="middle" x="125" y="160" style="font-weight: bold; font-size: 3rem;"><%= @latest.windSpeedCur %></text>
       <text text-anchor="middle" x="125" y="180" style="font-weight: normal; font-size: 1rem;">MPH</text>
-      <text text-anchor="middle" x="125" y="255" style="font-family: Sans-Serif; font-weight: bold; font-size: 2rem;">Wind</text>
+      <text text-anchor="middle" x="125" y="255" class="gauge_main_label">Wind</text>
       <text text-anchor="middle" x="125" y="272" style="font-family: Sans-Serif; font-weight: normal; font-size: 0.6rem;"><%= datetime_format(@latest.dateTime) %></text>
     </svg>
     """
