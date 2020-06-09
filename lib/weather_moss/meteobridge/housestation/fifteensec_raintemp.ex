@@ -1,5 +1,10 @@
 defmodule WeatherMoss.Meteobridge.Housestation.FifteensecondRainAndTemp do
   use Ecto.Schema
+  use WeatherMoss.Meteobridge.Housestation.SharedQueries
+  use WeatherMoss.Meteobridge.Housestation.SharedRainAndTempQueries
+  import Ecto.Query
+  import Ecto.Changeset
+  alias __MODULE__
 
   @primary_key {:id, :id, autogenerate: true}
 
@@ -11,4 +16,15 @@ defmodule WeatherMoss.Meteobridge.Housestation.FifteensecondRainAndTemp do
     field :rainRateCur, :decimal
     field :rainDay, :decimal
   end
+
+  def changeset(%FifteensecondRainAndTemp{} = struct, attrs \\ %{}) do
+    struct
+    |> cast(attrs, [:dateTime, :tempOutCur, :rainRateCur, :rainDay])
+    |> validate_required([:dateTime, :tempOutCur, :rainRateCur, :rainDay])
+  end
+
+  #defp cast_timestamp(%Ecto.Chargeset{} = changeset, field) when is_atom(field) do
+    #changeset.params
+  #end
+
 end

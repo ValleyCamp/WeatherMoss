@@ -1,5 +1,10 @@
 defmodule WeatherMoss.Meteobridge.Housestation.TenminuteAll do
   use Ecto.Schema
+  use WeatherMoss.Meteobridge.Housestation.SharedQueries
+  use WeatherMoss.Meteobridge.Housestation.SharedRainAndTempQueries
+  import Ecto.Query
+  import Ecto.Changeset
+  alias __MODULE__
 
   @primary_key {:id, :id, autogenerate: true}
 
@@ -30,6 +35,65 @@ defmodule WeatherMoss.Meteobridge.Housestation.TenminuteAll do
     field :rainDay, :decimal
     field :rainYest, :decimal
     field :rainMonth, :decimal
-    field :rainYear, :decimal
+    field :rainYear, :decimal      #NOTE: This is for the "meteorological year", Oct 1st to Sept 30th
   end
+
+  def changeset(%TenminuteAll{} = struct, attrs \\ %{}) do
+    struct
+    |> cast(attrs, [
+      :dateTime,
+      :tempOutCur,
+      :humOutCur,
+      :pressCur,
+      :dewCur,
+      :heatIdxCur,
+      :windChillCur,
+      :tempInCur,
+      :humInCur,
+      :windSpeedCur,
+      :windAvgSpeedCur,
+      :windDirCur,
+      :windDirCurEng,
+      :windGust10,
+      :windDirAvg10,
+      :windDirAvg10Eng,
+      :uVAvg10,
+      :uVMax10,
+      :solarRadAvg10,
+      :solarRadMax10,
+      :rainRateCur,
+      :rainDay,
+      :rainYest,
+      :rainMonth,
+      :rainYear,
+    ])
+    |> validate_required([
+      :dateTime,
+      :tempOutCur,
+      :humOutCur,
+      :pressCur,
+      :dewCur,
+      :heatIdxCur,
+      :windChillCur,
+      :tempInCur,
+      :humInCur,
+      :windSpeedCur,
+      :windAvgSpeedCur,
+      :windDirCur,
+      :windDirCurEng,
+      :windGust10,
+      :windDirAvg10,
+      :windDirAvg10Eng,
+      :uVAvg10,
+      :uVMax10,
+      :solarRadAvg10,
+      :solarRadMax10,
+      :rainRateCur,
+      :rainDay,
+      :rainYest,
+      :rainMonth,
+      :rainYear,
+    ])
+  end
+
 end
