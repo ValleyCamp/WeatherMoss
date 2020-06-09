@@ -9,7 +9,9 @@ use Mix.Config
 
 config :weather_moss,
   ecto_repos: [WeatherMoss.MeteobridgeRepo],
-  site_tz: "America/Los_Angeles"
+  site_tz: "America/Los_Angeles",
+  site_name: "Valley Camp",
+  enable_fake_meteobridge_emitter: false
 
 # Configures the endpoint
 config :weather_moss, WeatherMossWeb.Endpoint,

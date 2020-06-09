@@ -19,11 +19,22 @@ defmodule WeatherMoss.Application do
       # {WeatherMoss.Worker, arg}
       WeatherMoss.Meteobridge
     ]
+    |> conditionally_insert_fake_emitter
+
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: WeatherMoss.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  # The FakeEventEmitter needs to be inserted BEFORE the Meteobridge worker, otherwise things get crashy due to no values existing in a fresh database.
+  defp conditionally_insert_fake_emitter(children) do
+    if Application.get_env(:weather_moss, :enable_fake_meteobridge_emitter) do
+      List.insert_at(children, -2, WeatherMoss.Meteobridge.FakeEventEmitter)
+    else
+      children
+    end
   end
 
   # Tell Phoenix to update the endpoint configuration

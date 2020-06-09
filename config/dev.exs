@@ -1,10 +1,14 @@
 use Mix.Config
 
+
+config :weather_moss,
+  enable_fake_meteobridge_emitter: true
+
 # Configure the MeteoBridge data repo (Should be read-only data)
 config :weather_moss, WeatherMoss.MeteobridgeRepo,
   username: "weathermoss",
   password: "",
-  database: "meteobridge",
+  database: "weathermoss_dev",
   socket: "/run/mysqld/mysqld.sock",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
