@@ -13,28 +13,32 @@ defmodule WeatherMoss.Meteobridge.FifteensecondScaleValues do
     windSpeedMax: 5,
   ]
 
+  @doc """
+  Get a new FifteensecondScaleValues, calculating all of the values based on values from the database.
+  """
+  @spec fetch() :: FifteensecondScaleValues.t()
   def fetch do
-    ret = %FifteensecondScaleValues{}
-    FifteensecondScaleValues.put_if_greater(ret, :temOutCurMax,
-                                            FifteensecondRainAndTemp
-                                            |> FifteensecondRainAndTemp.min_temp
-                                            |> FifteensecondRainAndTemp.in_last_day
-                                            |> WeatherMoss.MeteobridgeRepo.all)
-    FifteensecondScaleValues.put_if_lesser(ret, :tempOutCurMin,
-                                           FifteensecondRainAndTemp
-                                           |> FifteensecondRainAndTemp.max_temp
-                                           |> FifteensecondRainAndTemp.in_last_day
-                                           |> WeatherMoss.MeteobridgeRepo.all)
-    FifteensecondScaleValues.put_if_greater(ret, :rainDayMax,
-                                            FifteensecondRainAndTemp
-                                            |> FifteensecondRainAndTemp.max_daily_rain
-                                            |> FifteensecondRainAndTemp.in_last_day
-                                            |> WeatherMoss.MeteobridgeRepo.all)
-    FifteensecondScaleValues.put_if_greater(ret, :windSpeedMax,
-                                            FifteensecondWind
-                                            |> FifteensecondWind.max_wind_speed
-                                            |> FifteensecondWind.in_last_day
-                                            |> WeatherMoss.MeteobridgeRepo.all)
+    ret = %FifteensecondScaleValues{} 
+    ret = FifteensecondScaleValues.put_if_greater(ret, :temOutCurMax,
+                                                        FifteensecondRainAndTemp
+                                                        |> FifteensecondRainAndTemp.max_temp
+                                                        |> FifteensecondRainAndTemp.in_last_month
+                                                        |> WeatherMoss.MeteobridgeRepo.one)
+    |> FifteensecondScaleValues.put_if_lesser(:tempOutCurMin,
+                                               FifteensecondRainAndTemp
+                                               |> FifteensecondRainAndTemp.min_temp
+                                               |> FifteensecondRainAndTemp.in_last_month
+                                               |> WeatherMoss.MeteobridgeRepo.one)
+    |> FifteensecondScaleValues.put_if_greater(:rainDayMax,
+                                                FifteensecondRainAndTemp
+                                                |> FifteensecondRainAndTemp.max_daily_rain
+                                                |> FifteensecondRainAndTemp.in_last_month
+                                                |> WeatherMoss.MeteobridgeRepo.one)
+    |> FifteensecondScaleValues.put_if_greater(:windSpeedMax,
+                                                FifteensecondWind
+                                                |> FifteensecondWind.max_wind_speed
+                                                |> FifteensecondWind.in_last_month
+                                                |> WeatherMoss.MeteobridgeRepo.one)
     {:ok, ret}
   end
 
