@@ -110,7 +110,7 @@ defmodule WeatherMoss.Meteobridge.FakeEventEmitter do
     end
 
     newTemp = cur.tempOutCur + ((Enum.random(0..5)*0.01) * tempDirection)
-    newRainRate = cur.rainRateCur + ((Enum.random(0..2)*0.01) * Enum.random([-1,1]))
+    newRainRate = Enum.random(0..4)*0.01
 
     cur
     |> Map.put(:dateTime, DateTime.truncate(DateTime.utc_now, :second))
