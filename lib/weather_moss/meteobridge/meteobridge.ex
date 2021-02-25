@@ -37,8 +37,18 @@ defmodule WeatherMoss.Meteobridge do
       [] -> update_fifteensec_wind()
     end
 
-    {:ok, %{:tenminute_all => cached_tenminute_all, :fifteensec_raintemp => cached_fifteensec_raintemp, :fifteensec_wind => cached_fifteensec_wind}}
+    {:ok, %{
+      :tenminute_all => cached_tenminute_all,
+      :fifteensec_raintemp => cached_fifteensec_raintemp,
+      :fifteensec_wind => cached_fifteensec_wind
+    }}
   end
+
+  def get_scale_vals do
+    {:ok, fifteenSec_vals} = WeatherMoss.Meteobridge.FifteensecondScaleValues.fetch()
+    {:ok, %{fifteenSecond: fifteenSec_vals, tenMinute: %{} } }
+  end
+
 
   ## GenServer Server
   

@@ -12,6 +12,14 @@ defmodule WeatherMoss.Meteobridge.Housestation.SharedQueries do
           where: r.dateTime >= ^dayago
       end
 
+      def in_last_week(query) do
+        monthago = DateTime.utc_now
+                |> DateTime.add(-604800, :second) # 60*60*24*7
+
+        from r in query,
+          where: r.dateTime >= ^monthago
+      end
+
       def in_last_month(query) do
         monthago = DateTime.utc_now
                 |> DateTime.add(-26784000, :second) # 60*60*24*31

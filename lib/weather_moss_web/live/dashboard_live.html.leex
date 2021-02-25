@@ -1,0 +1,19 @@
+<h2 style="text-align: center;">Current Weather at Valley Camp</h2>
+
+<section style="display:flex; flex-direction: row; justify-content: space-around;">
+  <article style="width: 260px;" class="mbdash_widget">
+    <%= live_component @socket, WeatherMossWeb.WindGaugeArcComponent, gaugeArc: @fifteen_second_wind_gauge %>
+    <div class="gauge_timestamp"><%= datetime_format(@meteobridge_latest.fifteensec_wind.dateTime) %></div>
+  </article>
+  <article style="width: 410px;" class="mbdash_widget">
+    <%= live_component @socket, WeatherMossWeb.GaugeLineComponent, gaugeLine: @fifteen_second_temperature_gauge %>
+    <%= live_component @socket, WeatherMossWeb.GaugeLineComponent, gaugeLine: @fifteen_second_rain_gauge %>
+    <div class="gauge_timestamp"><%= datetime_format(@meteobridge_latest.fifteensec_raintemp.dateTime) %></div>
+  </article>
+</section>
+
+<%#<section style="display: flex; flex-direction: row; justify-content: space-between;">%>
+  <%#<article>%>
+    <%#<%= live_component @socket, WeatherMossWeb.MeteobridgeTenMinuteAllComponent, latest: @meteobridge_latest.tenminute_all %>
+  <%#</article>%>
+<%#</section>%>

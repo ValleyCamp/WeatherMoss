@@ -6,6 +6,7 @@ defmodule WeatherMossWeb.GagueArcTest do
  # doctest GaugeArc
 
 
+  # TODO: Should have more params tested? Should even exist?
   test "default parameters are correct" do
     ga = %GaugeArc{}
 
@@ -190,11 +191,11 @@ defmodule WeatherMossWeb.GagueArcTest do
   end
 
   test "raw_svg_dasharray_attr_string generates correct dash attributes" do
-    line1 = %GaugeLine{scaleTopVal: 100, scaleBottomVal: 0, fillTopVal: 100, fillBottomVar: 0}
+    line1 = %GaugeLine{scaleTopVal: 100, scaleBottomVal: 0, fillTopVal: 100, fillBottomVal: 0}
     assert GaugeLine.raw_svg_dasharray_attr_string(line1) == ""
     # Compare to calculated known values for arbitrary line
-    line2 = %GaugeLine{scaleTopVal: 100, scaleBottomVal: 0, fillTopVal: 100, fillBottomVal: 0, topX: 10, topY: 25, height: 100}
-    assert GaugeLine.raw_svg_dasharray_attr_string(line2) == " stroke-dashoffset=\"-0\" stroke-dasharray=\"#{line1.height} 0\" "
+    line2 = %GaugeLine{scaleTopVal: 100, scaleBottomVal: 0, fillTopVal: 100, fillBottomVal: 50, topX: 10, topY: 25, height: 100}
+    assert GaugeLine.raw_svg_dasharray_attr_string(line2) == " stroke-dashoffset=\"-50.0\" stroke-dasharray=\"50.0 #{line1.height}\" "
     #assert GaugeLine.length_between_scale_values(line1, 0, 50) == 50 
     #assert GaugeLine.length_between_scale_values(line1, 25, 50) == 25 
     #assert GaugeLine.length_between_scale_values(line1, 0, 1) ==  1

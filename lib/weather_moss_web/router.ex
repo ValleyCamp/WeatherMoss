@@ -17,7 +17,7 @@ defmodule WeatherMossWeb.Router do
   scope "/", WeatherMossWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
+    live "/", DashboardLive, :index
   end
 
   # Other scopes may use custom stacks.
