@@ -29,32 +29,32 @@ defmodule WeatherMoss.Meteobridge.FifteensecondScaleValues do
   """
   @spec fetch() :: FifteensecondScaleValues.t()
   def fetch do
-    ret = %FifteensecondScaleValues{} 
-    ret = FifteensecondScaleValues.put_if_greater(ret, :temOutCurMax,
-                                                        FifteensecondRainAndTemp
-                                                        |> FifteensecondRainAndTemp.max_temp
-                                                        |> FifteensecondRainAndTemp.in_last_month
-                                                        |> WeatherMoss.MeteobridgeRepo.one)
-    |> FifteensecondScaleValues.put_if_lesser(:tempOutCurMin,
-                                               FifteensecondRainAndTemp
-                                               |> FifteensecondRainAndTemp.min_temp
-                                               |> FifteensecondRainAndTemp.in_last_month
-                                               |> WeatherMoss.MeteobridgeRepo.one)
-    |> FifteensecondScaleValues.put_if_greater(:rainDayMax,
-                                                FifteensecondRainAndTemp
-                                                |> FifteensecondRainAndTemp.max_daily_rain
-                                                |> FifteensecondRainAndTemp.in_last_month
-                                                |> WeatherMoss.MeteobridgeRepo.one)
-    |> FifteensecondScaleValues.put_if_greater(:windSpeedMax,
-                                                FifteensecondWind
-                                                |> FifteensecondWind.max_wind_speed
-                                                |> FifteensecondWind.in_last_month
-                                                |> WeatherMoss.MeteobridgeRepo.one)
+    ret = %WeatherMoss.Meteobridge.FifteensecondScaleValues{} 
+          |> FifteensecondScaleValues.put_if_greater(:temOutCurMax,
+                                                     FifteensecondRainAndTemp
+                                                     |> FifteensecondRainAndTemp.max_temp
+                                                     |> FifteensecondRainAndTemp.in_last_month
+                                                     |> WeatherMoss.MeteobridgeRepo.one)
+          |> FifteensecondScaleValues.put_if_lesser(:tempOutCurMin,
+                                                    FifteensecondRainAndTemp
+                                                    |> FifteensecondRainAndTemp.min_temp
+                                                    |> FifteensecondRainAndTemp.in_last_month
+                                                    |> WeatherMoss.MeteobridgeRepo.one)
+          |> FifteensecondScaleValues.put_if_greater(:rainDayMax,
+                                                     FifteensecondRainAndTemp
+                                                     |> FifteensecondRainAndTemp.max_daily_rain
+                                                     |> FifteensecondRainAndTemp.in_last_month
+                                                     |> WeatherMoss.MeteobridgeRepo.one)
+          |> FifteensecondScaleValues.put_if_greater(:windSpeedMax,
+                                                     FifteensecondWind
+                                                     |> FifteensecondWind.max_wind_speed
+                                                     |> FifteensecondWind.in_last_month
+                                                     |> WeatherMoss.MeteobridgeRepo.one)
     {:ok, ret}
   end
 
   @doc """
-  If the given val is greater than the val existing in the struct, update the val in the struct.
+  If the given val is greater than the val existing in the struct for the given key, update the val in the struct.
   """
   @spec put_if_greater(FifteenSecondScaleValues.t(), Decimal.t(), Decimal.t()) :: Map.t()
   def put_if_greater(%FifteensecondScaleValues{} = valStruct, key, val) do
@@ -62,7 +62,7 @@ defmodule WeatherMoss.Meteobridge.FifteensecondScaleValues do
   end
 
   @doc """
-  If the given val is less than the val existing in the struct, update the val in the struct.
+  If the given val is less than the val existing in the struct for the given key, update the val in the struct.
   """
   @spec put_if_lesser(FifteensecondScaleValues.t(), Decimal.t(), Decimal.t()) :: Map.t()
   def put_if_lesser(%FifteensecondScaleValues{} = valStruct, key, val) do

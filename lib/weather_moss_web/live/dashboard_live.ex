@@ -15,13 +15,13 @@ defmodule WeatherMossWeb.DashboardLive do
     # Note that we could do a calculation here and try and get the send interval to line up with the 
     # insertion of values into the DB, however this would cause load spikes every 15 seconds as every
     # client requested at the same time, so we'll just do arbitrary 15 second cycles depending per-client.
-    if connected?(socket), do: :timer.send_interval(15000, self(), :update)
+    if connected?(socket), do: :timer.send_interval(15000, self(), :update_meteobridge)
 
     {:ok, build_assigns(socket)}
   end
 
   @impl true
-  def handle_info(:update, socket) do
+  def handle_info(:update_meteobridge, socket) do
     {:noreply, build_assigns(socket)}
   end
 
