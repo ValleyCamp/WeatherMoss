@@ -1,3 +1,6 @@
+!.weathermoss-dev-mysql-data/.gitkeep
+.weathermoss-dev-mysql-data/**
+
 # The directory Mix will write compiled artifacts to.
 /_build/
 
