@@ -6,11 +6,12 @@ config :weather_moss,
 
 # Configure the MeteoBridge data repo (Should be read-only data)
 config :weather_moss, WeatherMoss.MeteobridgeRepo,
-  username: "weathermoss",
-  password: "",
+  protocol: :tcp,
+  hostname: "127.0.0.1",
+  port: 23306,
+  username: "root",
+  password: "weathermossdeveloper",
   database: "weathermoss_dev",
-  socket: "/run/mysqld/mysqld.sock",
-  hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10 
 
