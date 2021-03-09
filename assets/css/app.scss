@@ -6,108 +6,27 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-$content-width: 960px;
-
-body {
-  margin: 0;
-  padding: 0;
-  background: #f0f0ff;
-}
-
-.layout-wrapper{
-  display: flex;
-  flex-direction: column;
-}
-
-header {
-  margin: 0;
-  padding: 0;
-
-  .logo-title-block {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: flex-end;
-    padding-top: 20px;
-    padding-bottom: 2em;
-    margin-bottom: 0;
-    background: #0a3d11;
-    a.weathermoss-logo {
-      display: inline-block;
-    }
-    h1 {
-      display: inline-block;
-      color: #ffffff;
-      text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
-      padding-left: 10px;
-      padding-right: 10px;
-      margin: 0;
-      font-size: 2.5rem;
-    }
-    .tagline {
-      display: inline-block;
-      font-size: 0.75rem;
-      color: #cccccc;
-      line-height: 1.3rem;
-    }
+.sidebar-nav{
+  li {
+    @apply p-7 text-2xl;
   }
-
-  nav {
-    padding: 0;
-    width: $content-width;
-    margin-left: auto;
-    margin-right: auto;
-    z-index: 50;
-    position: relative;
-    top:0px;
-    transform: translateY(-2.25rem);
-    margin-top: 0;
-    margin-bottom: -4rem;
-    ul {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      margin-left: 10%;
-      margin-right: 10%;
-      padding-left: 20px;
-      padding-right: 20px;
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
-      list-style: none;
-
-      li {
-        &:hover, &:focus {
-          background: #cfcfcf;
-        }
-        padding: 10px;
-      }
-      a {
-        text-decoration: none;
-        &:hover, &:focus {
-          text-decoration: underline;
-        }
-      }
-    }
-  }
-}
-
-.content-wrapper {
-  width: $content-width;
-  padding-top: 20px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-main {
 }
 
 /* WeatherMossWeb.Meteobridge */
-.mbdash_widget {
+.dash_widget {
   border: 2px solid #cccccc;
   border-radius: 10px;
   box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
   padding: 10px;
+  margin-left: 1.5rem;
+
+  svg {
+    display: inline-block;
+  }
+
+  div {
+
+  }
 }
 
 //.gauge-bg {
@@ -126,16 +45,16 @@ main {
 .gauge_timestamp {
   font-size: 0.7rem;
   text-align: center;
+  strong {
+    margin-right: 2rem;
+  }
 }
-
 //example of green-red gradient - UNUSED
 .gauge_gradient_bg {
   background-image: linear-gradient(to top, rgb(17,132,57), rgb(20,176,0), rgb(76,185,2), rgb(132,192,4), rgb(188,203,6), rgb(245,213,8),rgb(240,188,6),rgb(235,163,4),rgb(230,138,2),rgb(255,114,0))
 }
-
 .gauge_main_label {
   text-transform: uppercase;
-
   font-family: 'League Mono', Fallback, sans-serif;
   font-weight:  700; // Bold
   font-size: 1.3rem;
@@ -156,92 +75,6 @@ main {
   font-family: 'Leauge Mono', Fallback, sans-serif;
   font-weight: 600;
   font-size: 1.1rem;
-}
-
-
-
-/* Flex Definitons */
-.flex-container {
-  display: flex !important;
-}
-
-.flex-row {
-  flex-direction: row !important;
-  -webkit-box-orient: horizontal !important;
-
-  .flex-column {
-    -webkit-box-direction: normal !important;
-  }
-}
-
-.flex-column {
-  flex-direction: column !important;
-  -webkit-box-orient: vertical !important;
-
-  .flex-row {
-    -webkit-box-direction: normal !important;
-  }
-}
-
-
-
-
-/* LiveView specific classes for your customizations */
-.invalid-feedback {
-  color: #a94442;
-  display: block;
-  margin: -1rem 0 2rem;
-}
-
-.phx-no-feedback.invalid-feedback, .phx-no-feedback .invalid-feedback {
-  display: none;
-}
-
-.phx-click-loading {
-  opacity: 0.5;
-  transition: opacity 1s ease-out;
-}
-
-.phx-disconnected{
-  cursor: wait;
-}
-.phx-disconnected *{
-  pointer-events: none;
-}
-
-.phx-modal {
-  opacity: 1!important;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgb(0,0,0);
-  background-color: rgba(0,0,0,0.4);
-}
-
-.phx-modal-content {
-  background-color: #fefefe;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-}
-
-.phx-modal-close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.phx-modal-close:hover,
-.phx-modal-close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
 }
 
 
