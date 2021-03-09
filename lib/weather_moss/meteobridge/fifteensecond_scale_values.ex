@@ -13,6 +13,7 @@ defmodule WeatherMoss.Meteobridge.FifteensecondScaleValues do
     tempOutCurMax: Decimal.new("90.0"),
     tempOutCurMin: Decimal.new("30.0"),
     rainDayMax: Decimal.new("10.0"),
+    rainRateMax: Decimal.new("0.0"),
     windSpeedMax: Decimal.new("5.0"),
   ]
 
@@ -20,6 +21,7 @@ defmodule WeatherMoss.Meteobridge.FifteensecondScaleValues do
     tempOutCurMax: Decimal.t(),
     tempOutCurMin: Decimal.t(),
     rainDayMax: Decimal.t(),
+    rainRateMax: Decimal.t(),
     windSpeedMax: Decimal.t()
   }
 
@@ -45,6 +47,13 @@ defmodule WeatherMoss.Meteobridge.FifteensecondScaleValues do
                                                      |> FifteensecondRainAndTemp.max_daily_rain
                                                      |> FifteensecondRainAndTemp.in_last_month
                                                      |> WeatherMoss.MeteobridgeRepo.one)
+          |> FifteensecondScaleValues.put_if_greater(:rainRateMax,
+                                                     FifteensecondRainAndTemp
+                                                     |> FifteensecondRainAndTemp.max_rain_rate
+                                                     |> FifteensecondRainAndTemp.in_last_month
+                                                     |> WeatherMoss.MeteobridgeRepo.one)
+                                                     #|> Kernel.*(1.10)
+                                                     #|> Float.round(2))
           |> FifteensecondScaleValues.put_if_greater(:windSpeedMax,
                                                      FifteensecondWind
                                                      |> FifteensecondWind.max_wind_speed

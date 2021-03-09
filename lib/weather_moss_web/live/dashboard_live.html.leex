@@ -1,18 +1,20 @@
-<div class="w-full m-6 text-center font-bold text-3xl">Davis/Meteobridge</div>
+<div class="min-h-screen border-blue-600 border-solid border-r-8 p-4">
+  <div class="w-full text-center font-bold text-3xl">Davis/Meteobridge</div>
 
-<div class="flex">
-  <div class="dash_widget">
-    <%= live_component @socket, WeatherMossWeb.WindGaugeArcComponent, gaugeArc: @fifteen_second_wind_gauge %>
-    <div class="gauge_timestamp"><strong>15 seconds</strong> <%= datetime_format(@meteobridge_latest.fifteensec_wind.dateTime) %></div>
-  </div>
-  <div class="dash_widget">
-    <%= live_component @socket, WeatherMossWeb.GaugeLineComponent, gaugeLine: @fifteen_second_temperature_gauge %>
-    <%= live_component @socket, WeatherMossWeb.GaugeLineComponent, gaugeLine: @fifteen_second_rain_gauge %>
-    <div class="gauge_timestamp"><strong>15 seconds</strong> <%= datetime_format(@meteobridge_latest.fifteensec_raintemp.dateTime) %></div>
-  </div>
-  <div class="dash_widget">
-    <%= live_component @socket, WeatherMossWeb.MeteobridgeTenMinuteAllComponent, latest: @meteobridge_latest.tenminute_all %>
-    <div class="gauge_timestamp"><strong>10 minutes</strong></div>
+  <div class="flex flex-wrap m-4 justify-center">
+    <div class="dash_widget">
+      <%= live_component @socket, WeatherMossWeb.WindGaugeArcComponent, gaugeArc: @fifteen_second_wind_gauge %>
+      <div class="gauge_timestamp"><strong>15 seconds</strong> <%= datetime_format(@meteobridge_latest.fifteensec_wind.dateTime) %></div>
+    </div>
+    <div class="dash_widget">
+      <%= live_component @socket, WeatherMossWeb.GaugeLineComponent, gaugeLine: @fifteen_second_temperature_gauge %>
+      <%= live_component @socket, WeatherMossWeb.GaugeLineComponent, gaugeLine: @fifteen_second_rain_gauge %>
+      <%= live_component @socket, WeatherMossWeb.GaugeLineComponent, gaugeLine: @fifteen_second_rain_rate_gauge %>
+      <div class="gauge_timestamp"><strong>15 seconds</strong> <%= datetime_format(@meteobridge_latest.fifteensec_raintemp.dateTime) %></div>
+    </div>
+    <div class="dash_widget">
+      <%= live_component @socket, WeatherMossWeb.MeteobridgeTenMinuteAllComponent, latest: @meteobridge_latest.tenminute_all %>
+      <div class="gauge_timestamp"><strong>10 minutes</strong> <%= datetime_format(@meteobridge_latest.tenminute_all.dateTime) %></div>
+    </div>
   </div>
 </div>
-

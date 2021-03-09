@@ -9,6 +9,7 @@ defmodule WeatherMossWeb.DashboardLive do
   import WeatherMossWeb.ViewHelpers
   alias WeatherMossWeb.GaugeLine
   alias WeatherMossWeb.GaugeArc
+  alias WeatherMossWeb.RainRate
 
   @impl true
   def mount(_params, _session, socket) do
@@ -63,11 +64,22 @@ defmodule WeatherMossWeb.DashboardLive do
       windDirCurEng: meteobridge_latest.fifteensec_wind.windDirCurEng,
     } |> GaugeArc.build_initial_values()
 
+    fifteen_second_rain_rate_gauge = %GaugeLine{
+      html_id: "fifteen_second_rain_rate",
+      main_label_text: "Rain Rate",
+      scaleBottomVal: 0,
+      scaleTopVal: Decimal.to_float(meteobridge_scale_values.fifteenSecond.rainRateMax),
+      fillBottomVal: 0.0,
+      fillTopVal: Decimal.to_float(meteobridge_latest.fifteensec_raintemp.rainRateCur),
+      curVal: Decimal.to_float(meteobridge_latest.fifteensec_raintemp.rainRateCur),
+    } |> GaugeLine.build_initial_values()
+
     arg_list = Keyword.new()
       |> Keyword.put_new(:meteobridge_latest, meteobridge_latest)
       |> Keyword.put_new(:fifteen_second_temperature_gauge, fifteen_second_temperature_gauge)
       |> Keyword.put_new(:fifteen_second_rain_gauge, fifteen_second_rain_gauge)
       |> Keyword.put_new(:fifteen_second_wind_gauge, fifteen_second_wind_gauge)
+      |> Keyword.put_new(:fifteen_second_rain_rate_gauge, fifteen_second_rain_rate_gauge)
 
     assign(socket, arg_list)
   end
