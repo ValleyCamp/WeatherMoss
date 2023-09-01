@@ -5,9 +5,8 @@ defmodule WeatherMoss.MixProject do
     [
       app: :weather_moss,
       version: "0.1.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -20,7 +19,7 @@ defmodule WeatherMoss.MixProject do
   def application do
     [
       mod: {WeatherMoss.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: extra_applications(),
     ]
   end
 
@@ -28,25 +27,40 @@ defmodule WeatherMoss.MixProject do
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
+  defp extra_applications do
+    if Mix.env() == :dev do
+      [:observer, :wx, :logger, :runtime_tools]
+    else
+      [:logger, :runtime_tools]
+    end
+  end
+    
+
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.3"},
-      {:phoenix_ecto, "~> 4.1"},
-      {:ecto_sql, "~> 3.4"},
+      {:phoenix, "~> 1.7.7"},
+      {:phoenix_ecto, "~> 4.4"},
+      {:ecto_sql, "~> 3.10"},
       {:myxql, ">= 0.0.0"},
-      {:phoenix_live_view, "~> 0.13.0"},
-      {:floki, ">= 0.0.0", only: :test},
-      {:phoenix_html, "~> 2.11"},
+      {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.2.0"},
-      {:telemetry_metrics, "~> 0.4"},
-      {:telemetry_poller, "~> 0.4"},
-      {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"},
+      {:phoenix_live_view, "~> 0.19.0"},
+      {:floki, ">= 0.30.0", only: :test},
+      {:phoenix_live_dashboard, "~> 0.8.0"},
+      {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
+      {:swoosh, "~> 1.3"},
+      {:finch, "~> 0.13"},
+      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_poller, "~> 1.0"},
+      {:gettext, "~> 0.20"},
+      {:jason, "~> 1.2"},
+      {:plug_cowboy, "~> 2.5"},
+
+      # Our application deps:
       {:timex, "~> 3.6"},
     ]
   end
@@ -59,10 +73,13 @@ defmodule WeatherMoss.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup", "cmd npm install --prefix assets"],
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
+      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/meteobridge_repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
+      "assets.build": ["tailwind default", "esbuild default"],
+      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
     ]
   end
 end

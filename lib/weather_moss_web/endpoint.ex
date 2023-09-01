@@ -7,12 +7,9 @@ defmodule WeatherMossWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_weather_moss_key",
-    signing_salt: "ggYt/4Lp"
+    signing_salt: "YADiOoN9",
+    same_site: "Lax"
   ]
-
-  socket "/socket", WeatherMossWeb.UserSocket,
-    websocket: true,
-    longpoll: false
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
@@ -24,7 +21,7 @@ defmodule WeatherMossWeb.Endpoint do
     at: "/",
     from: :weather_moss,
     gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    only: WeatherMossWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

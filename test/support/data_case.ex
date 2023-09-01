@@ -28,13 +28,16 @@ defmodule WeatherMoss.DataCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(WeatherMoss.MeteobridgeRepo)
-
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(WeatherMoss.MeteobridgeRepo, {:shared, self()})
-    end
-
+    WeatherMoss.DataCase.setup_sandbox(tags)
     :ok
+  end
+
+  @doc """
+  Sets up the sandbox based on the test tags.
+  """
+  def setup_sandbox(tags) do
+    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(WeatherMoss.MeteobridgeRepo, shared: not tags[:async])
+    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
   end
 
   @doc """

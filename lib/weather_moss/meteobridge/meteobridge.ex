@@ -1,8 +1,9 @@
 defmodule WeatherMoss.Meteobridge do
   @moduledoc """
-  A module that provides access to the Meteobridge database.
+  A module that provides access to the data in the Meteobridge database.
   This database is a MySQL database that the Meteobridge device inserts data into. We will treat
   this database as a read-only database.
+
   In order to prevent the database from being slammed with queries we'll cache the latest results
   and sweep them from the cache if the cached result age is higher than the interval that the
   Meteobridge device inserts data into the DB. (This means that if no clients are accessing the

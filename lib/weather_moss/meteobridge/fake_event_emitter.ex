@@ -25,7 +25,6 @@ defmodule WeatherMoss.Meteobridge.FakeEventEmitter do
   ## GenServer Server
   def init(_) do
     :ets.new(@table, [:set, :public, :named_table, read_concurrency: true, write_concurrency: false])
-    
     Process.send_after(self(), :fifteensec, 1)
     Process.send_after(self(), :tenminute, 1)
     {:ok, %{}}

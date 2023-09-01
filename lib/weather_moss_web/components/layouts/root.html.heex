@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" class="[scrollbar-gutter:stable]">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title suffix=" · Phoenix Framework">
+      <%= assigns[:page_title] || "WeatherMoss" %>
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    <script defer phx-track-static type="text/javascript" src={~p"/js/snap.svg-min.js"}>
+    </script>
+  </head>
+  <body>
+    <div class="w-full min-h-screen flex flex-wrap lg:flex-nowrap">
+      <header class="order-first lg:order-last lg:min-w-1/2 bg-green-900 text-white lg:mx-auto">
+        <div class="p-8">
+          <a href="/">
+            <img src={ ~p"/images/weathermoss_logo.png" } alt="WeatherMoss Logo" />
+          </a>
+          <h1 class="text-5xl">WeatherMoss</h1>
+          <div class="mx-auto">Don't look out the window</div>
+        </div>
+        <nav class="mt-6">
+          <ul class="sidebar-nav">
+            <li class="bg-blue-600">+ <.link href={ ~p"/" }>Dashboard</.link></li>
+            <li class="bg-yellow-600">+ Table View</li>
+            <%= if Application.get_env(:weather_moss, :dev_routes) do %>
+              <li class="bg-pink-600">+ <.link href={ ~p"/dev/dashboard/" }>PHX.LiveDashboard</.link></li>
+            <% end %>
+          </ul>
+        </nav>
+      </header>
+      <div class="flex-grow">
+        <%= @inner_content %>
+      </div>
+    </div>
+  </body>
+</html>

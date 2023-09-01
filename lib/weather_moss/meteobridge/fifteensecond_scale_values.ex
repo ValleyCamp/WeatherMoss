@@ -32,7 +32,7 @@ defmodule WeatherMoss.Meteobridge.FifteensecondScaleValues do
   @spec fetch() :: FifteensecondScaleValues.t()
   def fetch do
     ret = %WeatherMoss.Meteobridge.FifteensecondScaleValues{} 
-          |> FifteensecondScaleValues.put_if_greater(:temOutCurMax,
+          |> FifteensecondScaleValues.put_if_greater(:tempOutCurMax,
                                                      FifteensecondRainAndTemp
                                                      |> FifteensecondRainAndTemp.max_temp
                                                      |> FifteensecondRainAndTemp.in_last_month
@@ -59,22 +59,31 @@ defmodule WeatherMoss.Meteobridge.FifteensecondScaleValues do
                                                      |> FifteensecondWind.max_wind_speed
                                                      |> FifteensecondWind.in_last_month
                                                      |> WeatherMoss.MeteobridgeRepo.one)
+
     {:ok, ret}
   end
 
   @doc """
   If the given val is greater than the val existing in the struct for the given key, update the val in the struct.
   """
-  @spec put_if_greater(FifteenSecondScaleValues.t(), Decimal.t(), Decimal.t()) :: Map.t()
+  @spec put_if_greater(FifteenSecondScaleValues.t(), Decimal.t(), Decimal.t()) :: FifteenSecondScaleValues.t()
   def put_if_greater(%FifteensecondScaleValues{} = valStruct, key, val) do
-    if val > Map.get(valStruct, key), do: Map.put(valStruct, key, val)
+    if val > Map.get(valStruct, key) do
+      Map.put(valStruct, key, val)
+    else
+      valStruct
+    end
   end
 
   @doc """
   If the given val is less than the val existing in the struct for the given key, update the val in the struct.
   """
-  @spec put_if_lesser(FifteensecondScaleValues.t(), Decimal.t(), Decimal.t()) :: Map.t()
+  @spec put_if_lesser(FifteensecondScaleValues.t(), Decimal.t(), Decimal.t()) :: FifteenSecondScaleValues.t()
   def put_if_lesser(%FifteensecondScaleValues{} = valStruct, key, val) do
-    if val < Map.get(valStruct, key), do: Map.put(valStruct, key, val)
+    if val < Map.get(valStruct, key) do
+      Map.put(valStruct, key, val)
+    else
+      valStruct
+    end
   end
 end
