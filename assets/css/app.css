@@ -6,10 +6,8 @@
 
 /* This file is for your main application CSS */
 
-.sidebar-nav{
-  li {
-    @apply p-7 text-2xl;
-  }
+.sidebar-nav li {
+  @apply p-7 text-2xl;
 }
 
 /* WeatherMossWeb.Meteobridge */
@@ -19,9 +17,9 @@
   box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
   padding: 10px;
   margin: 1rem;
-  svg {
-    display: inline-block;
-  }
+}
+.dash_widget svg {
+  display: inline-block;
 }
 
 /*
@@ -42,10 +40,11 @@
 .gauge_timestamp {
   font-size: 0.7rem;
   text-align: center;
-  strong {
-    margin-right: 2rem;
-  }
 }
+.gauge_timestamp strong {
+  margin-right: 2rem;
+}
+
 /* example of green-red gradient - UNUSED */
 .gauge_gradient_bg {
   background-image: linear-gradient(to top, rgb(17,132,57), rgb(20,176,0), rgb(76,185,2), rgb(132,192,4), rgb(188,203,6), rgb(245,213,8),rgb(240,188,6),rgb(235,163,4),rgb(230,138,2),rgb(255,114,0))
