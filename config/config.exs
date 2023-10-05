@@ -10,7 +10,7 @@ import Config
 config :weatherflow_tempest, :pubsub_name, WeatherMoss.PubSub
 
 config :weather_moss,
-  ecto_repos: [WeatherMoss.MeteobridgeRepo],
+  ecto_repos: [WeatherMoss.MeteobridgeRepo, WeatherMoss.Repo],
   site_tz: "America/Los_Angeles",
   site_name: "Valley Camp",
   enable_fake_meteobridge_emitter: false

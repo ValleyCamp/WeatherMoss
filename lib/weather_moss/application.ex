@@ -12,6 +12,8 @@ defmodule WeatherMoss.Application do
       WeatherMossWeb.Telemetry,
       # Start the Ecto repository for the Meteobridge DB
       WeatherMoss.MeteobridgeRepo,
+      # Start the Echo repository for the DB managed by us
+      WeatherMoss.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: WeatherMoss.PubSub},
       # Start Finch

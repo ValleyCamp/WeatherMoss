@@ -14,6 +14,13 @@ config :weather_moss, WeatherMoss.MeteobridgeRepo,
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 
+config :weather_moss, WeatherMoss.Repo,
+       database: "weather_moss_test",
+       username: "postgres",
+       password: "weathermossdeveloper",
+       hostname: "localhost",
+       port: 51423
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :weather_moss, WeatherMossWeb.Endpoint,

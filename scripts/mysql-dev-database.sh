@@ -24,7 +24,7 @@ case "$1" in
       if [ ! -d /tmp/$CONTAINER_NAME-data ]; then
         mkdir /tmp/$CONTAINER_NAME-data
       fi
-      docker run -d -p $CONTAINER_PORT:3306 -v "/tmp/$CONTAINER_NAME-data:/var/lib/mysql:z" -e MYSQL_ROOT_PASSWORD=weathermossdeveloper --name $CONTAINER_NAME $CONTAINER_IMAGE
+      docker run --rm -d -p $CONTAINER_PORT:3306 -v "/tmp/$CONTAINER_NAME-data:/var/lib/mysql:z" -e MYSQL_ROOT_PASSWORD=weathermossdeveloper --name $CONTAINER_NAME $CONTAINER_IMAGE
     fi
     getContainerStatus
     ;;

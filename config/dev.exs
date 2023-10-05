@@ -15,6 +15,15 @@ config :weather_moss, WeatherMoss.MeteobridgeRepo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
+
+config :weather_moss, WeatherMoss.Repo,
+       database: "weather_moss_dev",
+       username: "postgres",
+       password: "weathermossdeveloper",
+       hostname: "localhost",
+       port: 51423
+
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
