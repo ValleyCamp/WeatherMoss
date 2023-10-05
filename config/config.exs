@@ -7,6 +7,8 @@
 # General application configuration
 import Config
 
+config :weatherflow_tempest, :pubsub_name, WeatherMoss.PubSub
+
 config :weather_moss,
   ecto_repos: [WeatherMoss.MeteobridgeRepo],
   site_tz: "America/Los_Angeles",

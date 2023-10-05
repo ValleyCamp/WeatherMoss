@@ -62,6 +62,7 @@ defmodule WeatherMoss.MixProject do
 
       # Our application deps:
       {:timex, "~> 3.6"},
+      {:weatherflow_tempest, "~> 1.0.0"},
     ]
   end
 

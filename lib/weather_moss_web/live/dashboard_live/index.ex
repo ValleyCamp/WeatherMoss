@@ -2,12 +2,14 @@ defmodule WeatherMossWeb.DashboardLive.Index do
   use WeatherMossWeb, :live_view
   import WeatherMossWeb.WidgetComponents;
   alias WeatherMossWeb.Support.{GaugeLine, GaugeArc};
+  require Logger
 
   @impl true
   def mount(_params, _session, socket) do
     # Note that we could do a calculation here and try and get the send interval to line up with the 
     # insertion of values into the DB, however this would cause load spikes every 15 seconds as every
     # client requested at the same time, so we'll just do arbitrary 15 second cycles depending per-client.
+    #
     # NOTE: Should we be switching to the standard approach of
     #       if connected?(socket), do: Process.send_after(self(), :update_meteobridge, 30000)
     #       and calling Procces.send_after again in the handle_info(:update_meteobridge, socket)
@@ -15,12 +17,20 @@ defmodule WeatherMossWeb.DashboardLive.Index do
     #       Perhaps it's time to take another look at if mysql can notify us of updates, rather than polling...
     if connected?(socket), do: :timer.send_interval(15000, self(), :update_meteobridge)
 
+    WeatherflowTempest.PubSub.subscribe_to_udp_events()
+
     {:ok, build_assigns(socket)}
   end
 
   @impl true
   def handle_info(:update_meteobridge, socket) do
     {:noreply, build_assigns(socket)}
+  end
+
+  @impl true
+  def handle_info({{:weatherflow, event_type}, event_data}, socket) do
+    Logger.debug("Dashboard Got event type #{event_type}, from hub: #{event_data[:hub_sn]}")
+    {:noreply, socket}
   end
 
   @impl true
