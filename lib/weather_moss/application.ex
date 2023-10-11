@@ -22,6 +22,7 @@ defmodule WeatherMoss.Application do
       WeatherMossWeb.Endpoint,
       # Start a worker by calling: WeatherMoss.Worker.start_link(arg)
       # {WeatherMoss.Worker, arg}
+      WeatherMoss.Tempest.Logger,
       WeatherMoss.Meteobridge, # Note that this must be the last worker in the list, otherwise the fake emitter will not be inserted before it.
     ]
     |> conditionally_insert_fake_emitter
