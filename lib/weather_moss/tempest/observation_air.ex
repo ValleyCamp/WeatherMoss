@@ -18,7 +18,7 @@ defmodule WeatherMoss.Tempest.ObservationAir do
   @doc false
   def changeset(observation_air, attrs) do
     observation_air
-    |> cast(attrs, [:hub_sn, :serial_number, :timestamp, :station_pressure_MB, :air_temperature_C, :relative_humidity_percent, :lightningstrike_count, :lightningstrike_avg_distance_km, :battery])
-    |> validate_required([:hub_sn, :serial_number, :timestamp, :station_pressure_MB, :air_temperature_C, :relative_humidity_percent, :lightningstrike_count, :lightningstrike_avg_distance_km, :battery])
+    |> cast(attrs, [:hub_sn, :serial_number, :timestamp, :station_pressure_MB, :air_temperature_C, :relative_humidity_percent, :lightningstrike_count, :lightningstrike_avg_distance_km, :battery_volts])
+    |> validate_required([:hub_sn, :serial_number, :timestamp, :station_pressure_MB, :air_temperature_C, :relative_humidity_percent, :lightningstrike_count, :lightningstrike_avg_distance_km, :battery_volts])
   end
 end

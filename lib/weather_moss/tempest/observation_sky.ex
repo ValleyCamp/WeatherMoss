@@ -24,7 +24,7 @@ defmodule WeatherMoss.Tempest.ObservationSky do
   @doc false
   def changeset(observation_sky, attrs) do
     observation_sky
-    |> cast(attrs, [:hub_sn, :serial_number, :timestamp, :illuminance_lux, :uv_index, :rain_accumulated_mm, :wind_lull_ms, :wing_avg_ms, :wind_gust_ms, :wind_direction_degrees, :solar_radiation_wm2, :local_day_rain_accumulation, :precipitation_type, :wind_sample_interval_seconds, :battery_volts])
-    |> validate_required([:hub_sn, :serial_number, :timestamp, :illuminance_lux, :uv_index, :rain_accumulated_mm, :wind_lull_ms, :wing_avg_ms, :wind_gust_ms, :wind_direction_degrees, :solar_radiation_wm2, :local_day_rain_accumulation, :precipitation_type, :wind_sample_interval_seconds, :battery_volts])
+    |> cast(attrs, [:hub_sn, :serial_number, :timestamp, :illuminance_lux, :uv_index, :rain_accumulated_mm, :wind_lull_ms, :wing_avg_ms, :wind_gust_ms, :wind_direction_degrees, :solar_radiation_wm2, :local_day_rain_accumulation_mm, :precipitation_type, :wind_sample_interval_seconds, :battery_volts])
+    |> validate_required([:hub_sn, :serial_number, :timestamp, :illuminance_lux, :uv_index, :rain_accumulated_mm, :wind_lull_ms, :wing_avg_ms, :wind_gust_ms, :wind_direction_degrees, :solar_radiation_wm2, :local_day_rain_accumulation_mm, :precipitation_type, :wind_sample_interval_seconds, :battery_volts])
   end
 end
