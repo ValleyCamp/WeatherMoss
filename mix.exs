@@ -29,9 +29,9 @@ defmodule WeatherMoss.MixProject do
 
   defp extra_applications do
     if Mix.env() == :dev do
-      [:observer, :wx, :logger, :runtime_tools]
+      [:observer, :wx, :logger, :runtime_tools, :httpoison]
     else
-      [:logger, :runtime_tools]
+      [:logger, :runtime_tools, :httpoison]
     end
   end
     
@@ -62,6 +62,8 @@ defmodule WeatherMoss.MixProject do
       {:plug_cowboy, "~> 2.5"},
 
       # Our application deps:
+      {:httpoison, "~> 2.0"},
+      {:quantum, "~> 3.0"},
       {:timex, "~> 3.6"},
       {:weatherflow_tempest, "~> 1.0.0"},
     ]
