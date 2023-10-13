@@ -22,9 +22,14 @@ defmodule WeatherMossWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", WeatherMossWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", WeatherMossWeb do
+    pipe_through :api
+
+    resources "/meteobridge/10minute", TenMinuteObservationController, except: [:update, :create, :edit, :delete]
+    resources "/meteobridge/15second", FifteenSecondObservationController, except: [:update, :create, :edit, :delete]
+    resources "/meteobridge/end_of_day", EndOfDayObservationController, except: [:update, :create, :edit, :delete]
+    resources "/meteobridge/start_of_day", StartOfDayObservationController, except: [:update, :create, :edit, :delete]
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:weather_moss, :dev_routes) do
