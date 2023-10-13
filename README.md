@@ -34,9 +34,70 @@ gauge data that it collects to integrate into the dashboard.
 
 ## Deployment
 
-TODO: Document the Meteobridge configuration and MYSQL insert string for our
-schema.
-
 The application is designed to be deployed to a device running on the LAN
 at ValleyCamp. It must have full LAN access to listen to the UDP broadcasts,
 as well as access to the MySQL database that MeteoBridge writes to.
+
+### Meteobridge Event URLS
+
+success field will be "saved" for all events.
+
+/api/meteobridge/save_10minute?
+station=house&
+indoor_temp_act_F=[thb0temp-act=F]&
+indoor_humidity_act=[thb0hum-act]&
+indoor_dewpoint_act_F=[thb0dew-act=F]&
+temp_act_F=[th0temp-act=F]&
+humidity_act=[th0hum-act]&
+dewpoint_act_F=[th0edew-act=F]&
+heatindex_act_F=[th0heatindex-act=F]&
+pressure_act_hPa=[thb0press-act]&
+pressure_sealevel_act_inHg=[thb0seapress-act=inHg.2]&
+wind_chill_act_F=[wind0chill-act=F]&
+wind_speed_act_mph=[wind0wind-act=mph]&
+wind_speed_average_mph=[wind0avgwind-act=mph]&
+wind_speed_avg10_mph=[wind0wind-avg10=mph]&
+wind_speed_max_mph=[wind0wind-max10=mph]&
+wind_dir_act=[wind0dir-act]&
+wind_dir_act_en=[wind0dir-act=endir]&
+wind_dir_avg=[wind0dir-avg10]&
+wind_dir_avg_en=[wind0dir-avg10=endir]&
+uv_index_avg=[uv0index-avg10]&
+uv_index_max=[uv0index-max-10]&
+solar_rad_avg_wm2=[sol0rad-avg10]&
+solar_rad_max_wm2=[sol0rad-max10]&
+lightning_distance_avg_miles=[lgt0dist-avg10=mls.2]&
+lightning_energy_avg=[lgt0energy-avg10]&
+lightning_energy_max=[lgt0energy-max10]&
+lightning_strike_count=[lgt0total-max10]&
+rain_rate_act_in=[rain0rate-act=in.2]&
+rain_total_day_in=[rain0total-daysum=in.2]&
+
+/api/meteobridge/save_15second?
+station=house&
+temp_act_F=[th0temp-act=F]&
+rainrate_act_in=[rain0rate-act=in.2]&
+rain_total_day_in=[rain0total-daysum=in.2]&
+wind_dir_act=[wind0dir-act]&
+wind_dir_act_en=[wind0dir-act=endir]&
+wind_speed_act_mph=[wind0wind-act=mph.2]&
+solar_rad_act_wm2=[solar0rad-act]&
+uv_index=[uv0index-act]&
+
+/api/meteobridge/save_end_of_day?
+station=house&
+max_temp_F=[th0temp-dmax=F]&
+min_temp_F=[th0temp-dmin=F]&
+max_rain_rate_in=[rain0rate-dmax=in.2]&
+min_rain_rate_in=[rain0rate-dmin=in.2]&
+max_wind_gust_mph=[wind0wind-dmax=mph]&
+max_solar_rad_wm2=[sol0rad-dmax]&
+
+/api/meteobridge/save_start_of_day?
+station=house&
+rain_total_yesterday_in=[rain0total-ydaysum=in.2]&
+rain_total_month_in=[rain0total-monthsum=in.2]&
+rain_total_year_in=[rain0total-yearsum=in.2]&
+solar_max_possible=[solarmax]&
+astronomical_sunrise=[sunrise]&
+astronomical_sunset=[sunset]&
