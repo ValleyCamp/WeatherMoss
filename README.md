@@ -42,7 +42,7 @@ as well as access to the MySQL database that MeteoBridge writes to.
 
 success field will be "saved" for all events.
 
-/api/meteobridge/save_10minute?
+/api/meteobridge/10minute/new?
 station=house&
 indoor_temp_avg_F=[thb0temp-avg10=F]&
 indoor_humidity_act=[thb0hum-act]&
@@ -73,7 +73,7 @@ lightning_strike_count=[lgt0total-max10]&
 rain_rate_act_in=[rain0rate-act=in.2]&
 rain_total_day_in=[rain0total-daysum=in.2]&
 
-/api/meteobridge/save_15second?
+/api/meteobridge/15second/new?
 station=house&
 temp_act_F=[th0temp-act=F]&
 rain_rate_act_in=[rain0rate-act=in.2]&
@@ -84,7 +84,7 @@ wind_speed_act_mph=[wind0wind-act=mph.2]&
 solar_rad_act_wm2=[solar0rad-act]&
 uv_index=[uv0index-act]&
 
-/api/meteobridge/save_end_of_day?
+/api/meteobridge/end_of_day/new?
 station=house&
 max_temp_F=[th0temp-dmax=F]&
 min_temp_F=[th0temp-dmin=F]&
@@ -93,7 +93,7 @@ min_rain_rate_in=[rain0rate-dmin=in.2]&
 max_wind_gust_mph=[wind0wind-dmax=mph]&
 max_solar_rad_wm2=[sol0rad-dmax]&
 
-/api/meteobridge/save_start_of_day?
+/api/meteobridge/start_of_day/new?
 station=house&
 rain_total_yesterday_in=[rain0total-ydaysum=in.2]&
 rain_total_month_in=[rain0total-monthsum=in.2]&
