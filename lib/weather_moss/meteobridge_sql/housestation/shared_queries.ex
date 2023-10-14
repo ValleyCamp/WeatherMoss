@@ -1,5 +1,5 @@
 # Since there are some common features between the meteobridge housestation tables we can share some common queries between them
-defmodule WeatherMoss.Meteobridge.Housestation.SharedQueries do
+defmodule WeatherMoss.MeteobridgeSQL.Housestation.SharedQueries do
   defmacro __using__(_opts) do
     quote do 
       import Ecto.Query
@@ -32,7 +32,7 @@ defmodule WeatherMoss.Meteobridge.Housestation.SharedQueries do
 end
 
 
-defmodule WeatherMoss.Meteobridge.Housestation.SharedRainAndTempQueries do
+defmodule WeatherMoss.MeteobridgeSQL.Housestation.SharedRainAndTempQueries do
   import Ecto.Query
   defmacro __using__(_opts) do
     quote do

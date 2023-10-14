@@ -1,4 +1,4 @@
-defmodule WeatherMoss.Meteobridge do
+defmodule WeatherMoss.MeteobridgeSQL do
   @moduledoc """
   A module that provides access to the data in the Meteobridge database.
   This database is a MySQL database that the Meteobridge device inserts data into. We will treat
@@ -46,7 +46,7 @@ defmodule WeatherMoss.Meteobridge do
   end
 
   def get_scale_vals do
-    {:ok, fifteenSec_vals} = WeatherMoss.Meteobridge.FifteensecondScaleValues.fetch()
+    {:ok, fifteenSec_vals} = WeatherMoss.MeteobridgeSQL.FifteensecondScaleValues.fetch()
     {:ok, %{fifteenSecond: fifteenSec_vals, tenMinute: %{} } }
   end
 
@@ -98,21 +98,21 @@ defmodule WeatherMoss.Meteobridge do
   end
 
   defp update_tenminute_all do
-    tenminute_all = WeatherMoss.MeteobridgeRepo.one(from x in WeatherMoss.Meteobridge.Housestation.TenminuteAll, order_by: [desc: x.id], limit: 1)   
+    tenminute_all = WeatherMoss.MeteobridgeRepo.one(from x in WeatherMoss.MeteobridgeSQL.Housestation.TenminuteAll, order_by: [desc: x.id], limit: 1)
     :ets.insert(@table, {:tenminute_all, tenminute_all})
     :ets.insert(@table, {:sweep_tenminute_all_at, DateTime.add(tenminute_all.dateTime, 600)})
     tenminute_all
   end
 
   defp update_fifteensec_raintemp do
-    fifteensec_raintemp = WeatherMoss.MeteobridgeRepo.one(from x in WeatherMoss.Meteobridge.Housestation.FifteensecondRainAndTemp, order_by: [desc: x.id], limit: 1)   
+    fifteensec_raintemp = WeatherMoss.MeteobridgeRepo.one(from x in WeatherMoss.MeteobridgeSQL.Housestation.FifteensecondRainAndTemp, order_by: [desc: x.id], limit: 1)
     :ets.insert(@table, {:fifteensec_raintemp, fifteensec_raintemp})
     :ets.insert(@table, {:sweep_fifteensec_raintemp_at, DateTime.add(fifteensec_raintemp.dateTime, 15, :second)})
     fifteensec_raintemp
   end
 
   defp update_fifteensec_wind do
-    fifteensec_wind = WeatherMoss.MeteobridgeRepo.one(from x in WeatherMoss.Meteobridge.Housestation.FifteensecondWind, order_by: [desc: x.id], limit: 1)   
+    fifteensec_wind = WeatherMoss.MeteobridgeRepo.one(from x in WeatherMoss.MeteobridgeSQL.Housestation.FifteensecondWind, order_by: [desc: x.id], limit: 1)
     :ets.insert(@table, {:fifteensec_wind, fifteensec_wind})
     :ets.insert(@table, {:sweep_fifteensec_wind_at, DateTime.add(fifteensec_wind.dateTime, 15)})
     fifteensec_wind

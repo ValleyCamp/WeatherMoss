@@ -1,7 +1,7 @@
-defmodule WeatherMoss.Meteobridge.Housestation.TenminuteAll do
+defmodule WeatherMoss.MeteobridgeSQL.Housestation.TenminuteAll do
   use Ecto.Schema
-  use WeatherMoss.Meteobridge.Housestation.SharedQueries
-  use WeatherMoss.Meteobridge.Housestation.SharedRainAndTempQueries
+  use WeatherMoss.MeteobridgeSQL.Housestation.SharedQueries
+  use WeatherMoss.MeteobridgeSQL.Housestation.SharedRainAndTempQueries
   import Ecto.Query
   import Ecto.Changeset
   alias __MODULE__

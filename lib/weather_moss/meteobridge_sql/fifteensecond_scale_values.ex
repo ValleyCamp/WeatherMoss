@@ -1,12 +1,12 @@
-defmodule WeatherMoss.Meteobridge.FifteensecondScaleValues do
+defmodule WeatherMoss.MeteobridgeSQL.FifteensecondScaleValues do
   @moduledoc """
   Represents the initial scale values for the data values that are updated every fifteen seconds.
   Note that this module uses Decimals to represent values so that they are the same type as the Ecto schemas.
   This eases the cognitive workload by knowing everything internal to WeatherMoss.Meteobridge uses Decimal
   """
   alias __MODULE__
-  alias WeatherMoss.Meteobridge.Housestation.FifteensecondWind
-  alias WeatherMoss.Meteobridge.Housestation.FifteensecondRainAndTemp
+  alias WeatherMoss.MeteobridgeSQL.Housestation.FifteensecondWind
+  alias WeatherMoss.MeteobridgeSQL.Housestation.FifteensecondRainAndTemp
 
   #@enforce_keys [:tempOutCurMax, :tempOutCurMin, :rainDayMax, :windSpeedMax]
   defstruct [
@@ -31,7 +31,7 @@ defmodule WeatherMoss.Meteobridge.FifteensecondScaleValues do
   """
   @spec fetch() :: FifteensecondScaleValues.t()
   def fetch do
-    ret = %WeatherMoss.Meteobridge.FifteensecondScaleValues{} 
+    ret = %FifteensecondScaleValues{}
           |> FifteensecondScaleValues.put_if_greater(:tempOutCurMax,
                                                      FifteensecondRainAndTemp
                                                      |> FifteensecondRainAndTemp.max_temp

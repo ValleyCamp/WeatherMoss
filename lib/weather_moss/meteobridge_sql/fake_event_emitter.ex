@@ -1,4 +1,4 @@
-defmodule WeatherMoss.Meteobridge.FakeEventEmitter do
+defmodule WeatherMoss.MeteobridgeSQL.FakeEventEmitter do
   @moduledoc """
   When this GenServer is started it will pretend to be a Meteobridge device inserting values into the database at the correct intervals.
   It caches the previous values to make it easy to make the changes look natural. If your temp 15 seconds ago was -10, the temp now should not be 90.
@@ -9,9 +9,9 @@ defmodule WeatherMoss.Meteobridge.FakeEventEmitter do
   """
   #import Ecto.Query 
   use GenServer 
-  alias WeatherMoss.Meteobridge.Housestation.FifteensecondRainAndTemp
-  alias WeatherMoss.Meteobridge.Housestation.FifteensecondWind
-  alias WeatherMoss.Meteobridge.Housestation.TenminuteAll
+  alias WeatherMoss.MeteobridgeSQL.Housestation.FifteensecondRainAndTemp
+  alias WeatherMoss.MeteobridgeSQL.Housestation.FifteensecondWind
+  alias WeatherMoss.MeteobridgeSQL.Housestation.TenminuteAll
 
   @table :meteobridge_fakeemitter_cache
   @fifteensec_temp_inflection_after_cycles 40
@@ -57,7 +57,7 @@ defmodule WeatherMoss.Meteobridge.FakeEventEmitter do
       _ -> :ok
     end
 
-    #WeatherMoss.Meteobridge.Repo.transaction fn ->
+    #WeatherMoss.MeteobridgeRepo.transaction fn ->
       WeatherMoss.MeteobridgeRepo.insert!(newRainTemp)
       WeatherMoss.MeteobridgeRepo.insert!(newWind)
     #end

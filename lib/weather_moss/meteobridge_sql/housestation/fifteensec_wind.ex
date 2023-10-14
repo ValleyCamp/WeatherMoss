@@ -1,4 +1,4 @@
-defmodule WeatherMoss.Meteobridge.Housestation.FifteensecondWind do
+defmodule WeatherMoss.MeteobridgeSQL.Housestation.FifteensecondWind do
   use Ecto.Schema
   import Ecto.Query
   import Ecto.Changeset

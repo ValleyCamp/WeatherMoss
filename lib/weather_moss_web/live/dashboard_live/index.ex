@@ -40,53 +40,53 @@ defmodule WeatherMossWeb.DashboardLive.Index do
 
 
   defp build_assigns(socket) do
-    {:ok, meteobridge_latest} = WeatherMoss.Meteobridge.latest
-    {:ok, meteobridge_scale_values} = WeatherMoss.Meteobridge.get_scale_vals
+    {:ok, meteobridge_sql_latest} = WeatherMoss.MeteobridgeSQL.latest
+    {:ok, meteobridge_sql_scale_values} = WeatherMoss.MeteobridgeSQL.get_scale_vals
 
     fifteen_second_temperature_gauge = %GaugeLine{
       html_id: "fifteen_second_temperature_gauge",
       main_label_text: "Temperature",
-      scaleBottomVal: Decimal.to_float(meteobridge_scale_values.fifteenSecond.tempOutCurMin),
-      scaleTopVal: Decimal.to_float(meteobridge_scale_values.fifteenSecond.tempOutCurMax),
-      fillBottomVal: Decimal.to_float(meteobridge_latest.fifteensec_raintemp.tempOutCur),
-      fillTopVal: Decimal.to_float(meteobridge_latest.fifteensec_raintemp.tempOutCur),
-      curVal: Decimal.to_float(meteobridge_latest.fifteensec_raintemp.tempOutCur),
+      scaleBottomVal: Decimal.to_float(meteobridge_sql_scale_values.fifteenSecond.tempOutCurMin),
+      scaleTopVal: Decimal.to_float(meteobridge_sql_scale_values.fifteenSecond.tempOutCurMax),
+      fillBottomVal: Decimal.to_float(meteobridge_sql_latest.fifteensec_raintemp.tempOutCur),
+      fillTopVal: Decimal.to_float(meteobridge_sql_latest.fifteensec_raintemp.tempOutCur),
+      curVal: Decimal.to_float(meteobridge_sql_latest.fifteensec_raintemp.tempOutCur),
     } |> GaugeLine.build_initial_values()
 
     fifteen_second_rain_gauge = %GaugeLine{
       html_id: "fifteen_second_rain_gauge",
       main_label_text: "Daily Rain",
       scaleBottomVal: 0.0,
-      scaleTopVal: Decimal.to_float(meteobridge_scale_values.fifteenSecond.rainDayMax),
+      scaleTopVal: Decimal.to_float(meteobridge_sql_scale_values.fifteenSecond.rainDayMax),
       fillBottomVal: 0.0,
-      fillTopVal: Decimal.to_float(meteobridge_latest.fifteensec_raintemp.rainDay),
-      curVal: Decimal.to_float(meteobridge_latest.fifteensec_raintemp.rainDay),
+      fillTopVal: Decimal.to_float(meteobridge_sql_latest.fifteensec_raintemp.rainDay),
+      curVal: Decimal.to_float(meteobridge_sql_latest.fifteensec_raintemp.rainDay),
     } |> GaugeLine.build_initial_values()
 
     fifteen_second_wind_gauge = %GaugeArc{
       html_id: "fifteen_second_wind_gauge",
       main_label_text: "Wind",
       scaleBottomVal: 0,
-      scaleTopVal: Decimal.to_float(meteobridge_scale_values.fifteenSecond.windSpeedMax),
+      scaleTopVal: Decimal.to_float(meteobridge_sql_scale_values.fifteenSecond.windSpeedMax),
       fillStartVal: 0,
-      fillEndVal: Decimal.to_float(meteobridge_latest.fifteensec_wind.windSpeedCur),
-      curVal: Decimal.to_float(meteobridge_latest.fifteensec_wind.windSpeedCur),
-      windDirCur: meteobridge_latest.fifteensec_wind.windDirCur,
-      windDirCurEng: meteobridge_latest.fifteensec_wind.windDirCurEng,
+      fillEndVal: Decimal.to_float(meteobridge_sql_latest.fifteensec_wind.windSpeedCur),
+      curVal: Decimal.to_float(meteobridge_sql_latest.fifteensec_wind.windSpeedCur),
+      windDirCur: meteobridge_sql_latest.fifteensec_wind.windDirCur,
+      windDirCurEng: meteobridge_sql_latest.fifteensec_wind.windDirCurEng,
     } |> GaugeArc.build_initial_values()
 
     fifteen_second_rain_rate_gauge = %GaugeLine{
       html_id: "fifteen_second_rain_rate",
       main_label_text: "Rain Rate",
       scaleBottomVal: 0,
-      scaleTopVal: Decimal.to_float(meteobridge_scale_values.fifteenSecond.rainRateMax),
+      scaleTopVal: Decimal.to_float(meteobridge_sql_scale_values.fifteenSecond.rainRateMax),
       fillBottomVal: 0.0,
-      fillTopVal: Decimal.to_float(meteobridge_latest.fifteensec_raintemp.rainRateCur),
-      curVal: Decimal.to_float(meteobridge_latest.fifteensec_raintemp.rainRateCur),
+      fillTopVal: Decimal.to_float(meteobridge_sql_latest.fifteensec_raintemp.rainRateCur),
+      curVal: Decimal.to_float(meteobridge_sql_latest.fifteensec_raintemp.rainRateCur),
     } |> GaugeLine.build_initial_values()
 
     socket
-      |> assign(:meteobridge_latest, meteobridge_latest)
+      |> assign(:meteobridge_latest, meteobridge_sql_latest)
       |> assign(:fifteen_second_temperature_gauge, fifteen_second_temperature_gauge)
       |> assign(:fifteen_second_rain_gauge, fifteen_second_rain_gauge)
       |> assign(:fifteen_second_wind_gauge, fifteen_second_wind_gauge)
