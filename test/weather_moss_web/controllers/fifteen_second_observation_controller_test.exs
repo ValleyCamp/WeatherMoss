@@ -35,17 +35,17 @@ defmodule WeatherMossWeb.FifteenSecondObservationControllerTest do
 
   describe "index" do
     test "lists all meteobridge_fifteen_second_observations", %{conn: conn} do
-      conn = get(conn, ~p"/api/meteobridge_fifteen_second_observations")
+      conn = get(conn, ~p"/api/meteobridge/15second")
       assert json_response(conn, 200)["data"] == []
     end
   end
 
   describe "create fifteen_second_observation" do
     test "renders fifteen_second_observation when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/meteobridge_fifteen_second_observations", fifteen_second_observation: @create_attrs)
+      conn = post(conn, ~p"/api/meteobridge/15second", fifteen_second_observation: @create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
-      conn = get(conn, ~p"/api/meteobridge_fifteen_second_observations/#{id}")
+      conn = get(conn, ~p"/api/meteobridge/15second/#{id}")
 
       assert %{
                "id" => ^id,
@@ -62,7 +62,7 @@ defmodule WeatherMossWeb.FifteenSecondObservationControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, ~p"/api/meteobridge_fifteen_second_observations", fifteen_second_observation: @invalid_attrs)
+      conn = post(conn, ~p"/api/meteobridge/15second", fifteen_second_observation: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end

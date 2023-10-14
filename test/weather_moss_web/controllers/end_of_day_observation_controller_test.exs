@@ -31,17 +31,17 @@ defmodule WeatherMossWeb.EndOfDayObservationControllerTest do
 
   describe "index" do
     test "lists all meteobridge_end_of_day_observations", %{conn: conn} do
-      conn = get(conn, ~p"/api/meteobridge_end_of_day_observations")
+      conn = get(conn, ~p"/api/meteobridge/end_of_day")
       assert json_response(conn, 200)["data"] == []
     end
   end
 
   describe "create end_of_day_observation" do
     test "renders end_of_day_observation when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/meteobridge_end_of_day_observations", end_of_day_observation: @create_attrs)
+      conn = post(conn, ~p"/api/meteobridge/end_of_day", end_of_day_observation: @create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
-      conn = get(conn, ~p"/api/meteobridge_end_of_day_observations/#{id}")
+      conn = get(conn, ~p"/api/meteobridge/end_of_day/#{id}")
 
       assert %{
                "id" => ^id,
@@ -56,7 +56,7 @@ defmodule WeatherMossWeb.EndOfDayObservationControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, ~p"/api/meteobridge_end_of_day_observations", end_of_day_observation: @invalid_attrs)
+      conn = post(conn, ~p"/api/meteobridge/end_of_day", end_of_day_observation: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
