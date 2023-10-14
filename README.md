@@ -44,10 +44,10 @@ success field will be "saved" for all events.
 
 /api/meteobridge/save_10minute?
 station=house&
-indoor_temp_act_F=[thb0temp-act=F]&
+indoor_temp_avg_F=[thb0temp-avg10=F]&
 indoor_humidity_act=[thb0hum-act]&
 indoor_dewpoint_act_F=[thb0dew-act=F]&
-temp_act_F=[th0temp-act=F]&
+temp_avg_F=[th0temp-avg10=F]&
 humidity_act=[th0hum-act]&
 dewpoint_act_F=[th0edew-act=F]&
 heatindex_act_F=[th0heatindex-act=F]&
@@ -76,7 +76,7 @@ rain_total_day_in=[rain0total-daysum=in.2]&
 /api/meteobridge/save_15second?
 station=house&
 temp_act_F=[th0temp-act=F]&
-rainrate_act_in=[rain0rate-act=in.2]&
+rain_rate_act_in=[rain0rate-act=in.2]&
 rain_total_day_in=[rain0total-daysum=in.2]&
 wind_dir_act=[wind0dir-act]&
 wind_dir_act_en=[wind0dir-act=endir]&
