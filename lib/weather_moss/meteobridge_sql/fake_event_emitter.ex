@@ -127,7 +127,7 @@ defmodule WeatherMoss.MeteobridgeSQL.FakeEventEmitter do
 
   # Generate a new random fifteensec_wind from scratch
   defp generate_random_fifteensec_wind do
-    newWindDir = Enum.random(0..360)
+    newWindDir = Enum.random(0..359)
     %FifteensecondWind{dateTime: DateTime.truncate(DateTime.utc_now, :second), windDirCur: newWindDir, windDirCurEng: windDirEng_for_windDir(newWindDir), windSpeedCur: Enum.random(0..5)+(Enum.random(0..10)*0.1)}
   end
 
