@@ -5,20 +5,32 @@ defmodule WeatherMoss.Meteobridge do
 
   import Ecto.Query, warn: false
   alias WeatherMoss.Repo
-
-  alias WeatherMoss.Meteobridge.TenMinuteObservation
+  alias WeatherMoss.Meteobridge.{FifteenSecondObservation,TenMinuteObservation,StartOfDayObservation,EndOfDayObservation}
 
   @doc """
-  Returns the list of meteobridge_ten_minute_observations.
+  Returns the last n meteobridge_ten_minute_observations for a given station. (defaults to 48, or 8 hours worth)
+  For the sake of completeness will return the most recent observations from any station if no station is provided.
+  Note that in this case the data is not guaranteed to be 8 hours worth, since you may have 2 stations recording events
+  which would mean 48 events is just 4 hours.
 
   ## Examples
 
-      iex> list_meteobridge_ten_minute_observations()
+      iex> recent_ten_minute_observations("fake-dev-station")
       [%TenMinuteObservation{}, ...]
 
   """
-  def list_meteobridge_ten_minute_observations do
-    Repo.all(TenMinuteObservation)
+  def recent_ten_minute_observations(station \\ nil, limit \\ 48) do
+    case station do
+      nil -> TenMinuteObservation
+             |> order_by([o], desc: o.inserted_at)
+             |> limit(^limit)
+             |> Repo.all()
+      stn -> TenMinuteObservation
+             |> where([o], o.station == ^stn)
+             |> order_by([o], desc: o.inserted_at)
+             |> limit(^limit)
+             |> Repo.all()
+    end
   end
 
   @doc """
@@ -55,66 +67,32 @@ defmodule WeatherMoss.Meteobridge do
     |> Repo.insert()
   end
 
+
+
   @doc """
-  Updates a ten_minute_observation.
+  Returns the last n meteobridge_fifteen_second_observations for the given station. (Defaults to 240, or 1 hours worth)
+  For the sake of completeness will return the most recent observations from any station if no station is provided.
+  Note that in this case the data is not guaranteed to be an hours worth, since you may have 2 stations recording events
+  which would mean 240 events is just 30 minutes.
 
   ## Examples
 
-      iex> update_ten_minute_observation(ten_minute_observation, %{field: new_value})
-      {:ok, %TenMinuteObservation{}}
-
-      iex> update_ten_minute_observation(ten_minute_observation, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_ten_minute_observation(%TenMinuteObservation{} = ten_minute_observation, attrs) do
-    ten_minute_observation
-    |> TenMinuteObservation.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a ten_minute_observation.
-
-  ## Examples
-
-      iex> delete_ten_minute_observation(ten_minute_observation)
-      {:ok, %TenMinuteObservation{}}
-
-      iex> delete_ten_minute_observation(ten_minute_observation)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_ten_minute_observation(%TenMinuteObservation{} = ten_minute_observation) do
-    Repo.delete(ten_minute_observation)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking ten_minute_observation changes.
-
-  ## Examples
-
-      iex> change_ten_minute_observation(ten_minute_observation)
-      %Ecto.Changeset{data: %TenMinuteObservation{}}
-
-  """
-  def change_ten_minute_observation(%TenMinuteObservation{} = ten_minute_observation, attrs \\ %{}) do
-    TenMinuteObservation.changeset(ten_minute_observation, attrs)
-  end
-
-  alias WeatherMoss.Meteobridge.FifteenSecondObservation
-
-  @doc """
-  Returns the list of meteobridge_fifteen_second_observations.
-
-  ## Examples
-
-      iex> list_meteobridge_fifteen_second_observations()
+      iex> recent_fifteen_second_observations("fake-dev-station")
       [%FifteenSecondObservation{}, ...]
 
   """
-  def list_meteobridge_fifteen_second_observations do
-    Repo.all(FifteenSecondObservation)
+  def recent_fifteen_second_observations(station \\ nil, limit \\ 240) do
+    case station do
+      nil -> FifteenSecondObservation
+             |> order_by([o], desc: o.inserted_at)
+             |> limit(^limit)
+             |> Repo.all()
+      stn -> FifteenSecondObservation
+             |> where([o], o.station == ^stn)
+             |> order_by([o], desc: o.inserted_at)
+             |> limit(^limit)
+             |> Repo.all()
+    end
   end
 
   @doc """
@@ -152,65 +130,29 @@ defmodule WeatherMoss.Meteobridge do
   end
 
   @doc """
-  Updates a fifteen_second_observation.
+  Returns the last n meteobridge_start_of_day_observations. (Defaults to 7, for the last week)
+  For the sake of completeness will return the most recent observations from any station if no station is provided.
+  Note that in this case the data is not guaranteed to be an hours worth, since you may have 2 stations recording events
+  which would mean 7 events is just 3.5 days.
 
   ## Examples
 
-      iex> update_fifteen_second_observation(fifteen_second_observation, %{field: new_value})
-      {:ok, %FifteenSecondObservation{}}
-
-      iex> update_fifteen_second_observation(fifteen_second_observation, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_fifteen_second_observation(%FifteenSecondObservation{} = fifteen_second_observation, attrs) do
-    fifteen_second_observation
-    |> FifteenSecondObservation.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a fifteen_second_observation.
-
-  ## Examples
-
-      iex> delete_fifteen_second_observation(fifteen_second_observation)
-      {:ok, %FifteenSecondObservation{}}
-
-      iex> delete_fifteen_second_observation(fifteen_second_observation)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_fifteen_second_observation(%FifteenSecondObservation{} = fifteen_second_observation) do
-    Repo.delete(fifteen_second_observation)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking fifteen_second_observation changes.
-
-  ## Examples
-
-      iex> change_fifteen_second_observation(fifteen_second_observation)
-      %Ecto.Changeset{data: %FifteenSecondObservation{}}
-
-  """
-  def change_fifteen_second_observation(%FifteenSecondObservation{} = fifteen_second_observation, attrs \\ %{}) do
-    FifteenSecondObservation.changeset(fifteen_second_observation, attrs)
-  end
-
-  alias WeatherMoss.Meteobridge.StartOfDayObservation
-
-  @doc """
-  Returns the list of meteobridge_start_of_day_observations.
-
-  ## Examples
-
-      iex> list_meteobridge_start_of_day_observations()
+      iex> recent_start_of_day_observations("fake-dev-station")
       [%StartOfDayObservation{}, ...]
 
   """
-  def list_meteobridge_start_of_day_observations do
-    Repo.all(StartOfDayObservation)
+  def recent_start_of_day_observations(station \\ nil, limit \\ 7) do
+    case station do
+      nil -> StartOfDayObservation
+             |> order_by([o], desc: o.inserted_at)
+             |> limit(^limit)
+             |> Repo.all
+      stn -> StartOfDayObservation
+             |> where([o], o.station == ^stn)
+             |> order_by([o], desc: o.inserted_at)
+             |> limit(^limit)
+             |> Repo.all()
+    end
   end
 
   @doc """
@@ -248,65 +190,29 @@ defmodule WeatherMoss.Meteobridge do
   end
 
   @doc """
-  Updates a start_of_day_observation.
+  Returns the last n meteobridge_end_of_day_observations. (Defaults to 7, for the last week)
+  For the sake of completeness will return the most recent observations from any station if no station is provided.
+  Note that in this case the data is not guaranteed to be an hours worth, since you may have 2 stations recording events
+  which would mean 7 events is just 3.5 days.
 
   ## Examples
 
-      iex> update_start_of_day_observation(start_of_day_observation, %{field: new_value})
-      {:ok, %StartOfDayObservation{}}
-
-      iex> update_start_of_day_observation(start_of_day_observation, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_start_of_day_observation(%StartOfDayObservation{} = start_of_day_observation, attrs) do
-    start_of_day_observation
-    |> StartOfDayObservation.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a start_of_day_observation.
-
-  ## Examples
-
-      iex> delete_start_of_day_observation(start_of_day_observation)
-      {:ok, %StartOfDayObservation{}}
-
-      iex> delete_start_of_day_observation(start_of_day_observation)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_start_of_day_observation(%StartOfDayObservation{} = start_of_day_observation) do
-    Repo.delete(start_of_day_observation)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking start_of_day_observation changes.
-
-  ## Examples
-
-      iex> change_start_of_day_observation(start_of_day_observation)
-      %Ecto.Changeset{data: %StartOfDayObservation{}}
-
-  """
-  def change_start_of_day_observation(%StartOfDayObservation{} = start_of_day_observation, attrs \\ %{}) do
-    StartOfDayObservation.changeset(start_of_day_observation, attrs)
-  end
-
-  alias WeatherMoss.Meteobridge.EndOfDayObservation
-
-  @doc """
-  Returns the list of meteobridge_end_of_day_observations.
-
-  ## Examples
-
-      iex> list_meteobridge_end_of_day_observations()
+      iex> recent_end_of_day_observations("fake-dev-station")
       [%EndOfDayObservation{}, ...]
 
   """
-  def list_meteobridge_end_of_day_observations do
-    Repo.all(EndOfDayObservation)
+  def recent_end_of_day_observations(station \\ nil, limit \\ 7) do
+    case station do
+      nil -> EndOfDayObservation
+             |> order_by([o], desc: o.inserted_at)
+             |> limit(^limit)
+             |> Repo.all()
+      stn -> EndOfDayObservation
+             |> where([o], o.station == ^stn)
+             |> order_by([o], desc: o.inserted_at)
+             |> limit(^limit)
+             |> Repo.all()
+    end
   end
 
   @doc """
@@ -343,50 +249,4 @@ defmodule WeatherMoss.Meteobridge do
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a end_of_day_observation.
-
-  ## Examples
-
-      iex> update_end_of_day_observation(end_of_day_observation, %{field: new_value})
-      {:ok, %EndOfDayObservation{}}
-
-      iex> update_end_of_day_observation(end_of_day_observation, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_end_of_day_observation(%EndOfDayObservation{} = end_of_day_observation, attrs) do
-    end_of_day_observation
-    |> EndOfDayObservation.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a end_of_day_observation.
-
-  ## Examples
-
-      iex> delete_end_of_day_observation(end_of_day_observation)
-      {:ok, %EndOfDayObservation{}}
-
-      iex> delete_end_of_day_observation(end_of_day_observation)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_end_of_day_observation(%EndOfDayObservation{} = end_of_day_observation) do
-    Repo.delete(end_of_day_observation)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking end_of_day_observation changes.
-
-  ## Examples
-
-      iex> change_end_of_day_observation(end_of_day_observation)
-      %Ecto.Changeset{data: %EndOfDayObservation{}}
-
-  """
-  def change_end_of_day_observation(%EndOfDayObservation{} = end_of_day_observation, attrs \\ %{}) do
-    EndOfDayObservation.changeset(end_of_day_observation, attrs)
-  end
 end

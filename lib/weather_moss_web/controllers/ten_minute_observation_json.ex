@@ -5,14 +5,14 @@ defmodule WeatherMossWeb.TenMinuteObservationJSON do
   Renders a list of meteobridge_ten_minute_observations.
   """
   def index(%{meteobridge_ten_minute_observations: meteobridge_ten_minute_observations}) do
-    %{data: for(ten_minute_observation <- meteobridge_ten_minute_observations, do: data(ten_minute_observation))}
+    for(ten_minute_observation <- meteobridge_ten_minute_observations, do: data(ten_minute_observation))
   end
 
   @doc """
   Renders a single ten_minute_observation.
   """
   def show(%{ten_minute_observation: ten_minute_observation}) do
-    %{data: data(ten_minute_observation)}
+    data(ten_minute_observation)
   end
 
   defp data(%TenMinuteObservation{} = ten_minute_observation) do

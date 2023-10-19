@@ -5,14 +5,14 @@ defmodule WeatherMossWeb.FifteenSecondObservationJSON do
   Renders a list of meteobridge_fifteen_second_observations.
   """
   def index(%{meteobridge_fifteen_second_observations: meteobridge_fifteen_second_observations}) do
-    %{data: for(fifteen_second_observation <- meteobridge_fifteen_second_observations, do: data(fifteen_second_observation))}
+    for(fifteen_second_observation <- meteobridge_fifteen_second_observations, do: data(fifteen_second_observation))
   end
 
   @doc """
   Renders a single fifteen_second_observation.
   """
   def show(%{fifteen_second_observation: fifteen_second_observation}) do
-    %{data: data(fifteen_second_observation)}
+    data(fifteen_second_observation)
   end
 
   defp data(%FifteenSecondObservation{} = fifteen_second_observation) do

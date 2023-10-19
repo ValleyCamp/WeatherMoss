@@ -6,17 +6,16 @@ defmodule WeatherMossWeb.EndOfDayObservationController do
 
   action_fallback WeatherMossWeb.FallbackController
 
-  def index(conn, _params) do
-    meteobridge_end_of_day_observations = Meteobridge.list_meteobridge_end_of_day_observations()
+  def index(conn, params) do
+    meteobridge_end_of_day_observations = Meteobridge.recent_end_of_day_observations(params["station"])
     render(conn, :index, meteobridge_end_of_day_observations: meteobridge_end_of_day_observations)
   end
 
-  def create(conn, %{"end_of_day_observation" => end_of_day_observation_params}) do
-    with {:ok, %EndOfDayObservation{} = end_of_day_observation} <- Meteobridge.create_end_of_day_observation(end_of_day_observation_params) do
+  def new(conn, params) do
+    with {:ok, %EndOfDayObservation{} = saved} <- Meteobridge.create_end_of_day_observation(params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/meteobridge_end_of_day_observations/#{end_of_day_observation}")
-      |> render(:show, end_of_day_observation: end_of_day_observation)
+      |> json(%{status: "saved", id: saved.id})
     end
   end
 

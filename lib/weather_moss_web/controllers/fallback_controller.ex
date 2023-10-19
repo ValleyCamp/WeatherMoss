@@ -21,4 +21,5 @@ defmodule WeatherMossWeb.FallbackController do
     |> put_view(html: WeatherMossWeb.ErrorHTML, json: WeatherMossWeb.ErrorJSON)
     |> render(:"404")
   end
+
 end

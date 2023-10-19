@@ -6,17 +6,18 @@ defmodule WeatherMossWeb.TenMinuteObservationController do
 
   action_fallback WeatherMossWeb.FallbackController
 
-  def index(conn, _params) do
-    meteobridge_ten_minute_observations = Meteobridge.list_meteobridge_ten_minute_observations()
+  def index(conn, params) do
+    meteobridge_ten_minute_observations = Meteobridge.recent_ten_minute_observations(params["station"])
     render(conn, :index, meteobridge_ten_minute_observations: meteobridge_ten_minute_observations)
   end
 
-  def create(conn, %{"ten_minute_observation" => ten_minute_observation_params}) do
-    with {:ok, %TenMinuteObservation{} = ten_minute_observation} <- Meteobridge.create_ten_minute_observation(ten_minute_observation_params) do
+  # Note that we do *absolutely no* authorization checking here.
+  # Anyone who understands the correct URL structure could theoretically feed us bad data...
+  def new(conn, params) do
+    with {:ok, %TenMinuteObservation{} = saved} <- Meteobridge.create_ten_minute_observation(params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/meteobridge_ten_minute_observations/#{ten_minute_observation}")
-      |> render(:show, ten_minute_observation: ten_minute_observation)
+      |> json(%{status: "saved", id: saved.id})
     end
   end
 

@@ -5,14 +5,14 @@ defmodule WeatherMossWeb.EndOfDayObservationJSON do
   Renders a list of meteobridge_end_of_day_observations.
   """
   def index(%{meteobridge_end_of_day_observations: meteobridge_end_of_day_observations}) do
-    %{data: for(end_of_day_observation <- meteobridge_end_of_day_observations, do: data(end_of_day_observation))}
+    for(end_of_day_observation <- meteobridge_end_of_day_observations, do: data(end_of_day_observation))
   end
 
   @doc """
   Renders a single end_of_day_observation.
   """
   def show(%{end_of_day_observation: end_of_day_observation}) do
-    %{data: data(end_of_day_observation)}
+    data(end_of_day_observation)
   end
 
   defp data(%EndOfDayObservation{} = end_of_day_observation) do
