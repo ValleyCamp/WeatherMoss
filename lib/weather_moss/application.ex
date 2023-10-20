@@ -26,7 +26,7 @@ defmodule WeatherMoss.Application do
       WeatherMoss.Tempest.Logger,
       WeatherMoss.MeteobridgeSQL, # Note that this must be the last worker in the list, otherwise the fake emitter will not be inserted before it.
     ]
-    |> conditionally_insert_fake_emitter
+    |> maybe_insert_fake_emitters
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -35,9 +35,10 @@ defmodule WeatherMoss.Application do
   end
 
   # The FakeEventEmitter needs to be inserted BEFORE the Meteobridge worker, otherwise things get crashy due to no values existing in a fresh database.
-  defp conditionally_insert_fake_emitter(children) do
+  defp maybe_insert_fake_emitters(children) do
     if Application.get_env(:weather_moss, :enable_fake_meteobridge_emitter) do
       List.insert_at(children, -2, WeatherMoss.MeteobridgeSQL.FakeEventEmitter)
+      List.insert_at(children, -2, WeatherMoss.FakeMeteobridgeHTTPEvents)
     else
       children
     end
