@@ -3,6 +3,12 @@ import Config
 # Enable the fake meteobridge data being inserted into the DB in dev mode
 config :weather_moss, enable_fake_meteobridge_emitter: true
 
+config :weather_moss, WeatherMoss.Scheduler,
+ jobs: [
+   # Every 1 minutes save the data from the specified PurpleAir device
+   {"*/1 * * * *", {WeatherFlow.PurpleAir.DataLogger, :fetch_and_save, ["http://localhost:4000/dev/fake/purpleair"]}},
+ ]
+
 # Configure your database
 config :weather_moss, WeatherMoss.MeteobridgeRepo,
   protocol: :tcp,

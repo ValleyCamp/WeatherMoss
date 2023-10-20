@@ -31,6 +31,19 @@ defmodule WeatherMossWeb.Router do
     resources "/meteobridge/start_of_day", StartOfDayObservationController, except: [:update, :create, :edit, :delete]
   end
 
+  # enable our fake PurpleAir data endpoint in dev mode
+  if Application.compile_env(:weather_moss, :dev_routes) do
+    scope "/dev" do
+      scope "/fake", WeatherMossWeb do
+        pipe_through :api
+
+        scope "/purpleair" do
+          resources "/json", FakePurpleairDataController, only: [:index]
+        end
+      end
+    end
+  end
+
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:weather_moss, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put

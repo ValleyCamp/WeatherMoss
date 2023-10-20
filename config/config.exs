@@ -15,12 +15,6 @@ config :weather_moss,
   site_name: "Valley Camp",
   enable_fake_meteobridge_emitter: false
 
-config :weather_moss, WeatherMoss.Scheduler,
-  jobs: [
-    # Every 2 minutes save the data from the specified PurpleAir device
-    {"*/2 * * * *", {WeatherFlow.PurpleAir.DataLogger, :fetch_and_save, ["http://purpleair-b319.actual.valleycamp.org"]}},
-  ]
-
 # Configures the endpoint
 config :weather_moss, WeatherMossWeb.Endpoint,
   url: [host: "localhost"],
