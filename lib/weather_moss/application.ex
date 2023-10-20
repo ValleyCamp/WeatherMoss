@@ -37,8 +37,9 @@ defmodule WeatherMoss.Application do
   # The FakeEventEmitter needs to be inserted BEFORE the Meteobridge worker, otherwise things get crashy due to no values existing in a fresh database.
   defp maybe_insert_fake_emitters(children) do
     if Application.get_env(:weather_moss, :enable_fake_meteobridge_emitter) do
-      List.insert_at(children, -2, WeatherMoss.MeteobridgeSQL.FakeEventEmitter)
-      List.insert_at(children, -2, WeatherMoss.FakeMeteobridgeHTTPEvents)
+      children
+      |> List.insert_at(-2, WeatherMoss.FakeMeteobridgeSQLEvents)
+      |> List.insert_at(-2, WeatherMoss.FakeMeteobridgeHTTPEvents)
     else
       children
     end

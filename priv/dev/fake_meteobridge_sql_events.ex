@@ -1,4 +1,4 @@
-defmodule WeatherMoss.MeteobridgeSQL.FakeEventEmitter do
+defmodule WeatherMoss.FakeMeteobridgeSQLEvents do
   @moduledoc """
   When this GenServer is started it will pretend to be a Meteobridge device inserting values into the database at the correct intervals.
   It caches the previous values to make it easy to make the changes look natural. If your temp 15 seconds ago was -10, the temp now should not be 90.
@@ -23,6 +23,7 @@ defmodule WeatherMoss.MeteobridgeSQL.FakeEventEmitter do
   end
 
   ## GenServer Server
+  @impl true
   def init(_) do
     :ets.new(@table, [:set, :public, :named_table, read_concurrency: true, write_concurrency: false])
     Process.send_after(self(), :fifteensec, 1)
@@ -30,10 +31,9 @@ defmodule WeatherMoss.MeteobridgeSQL.FakeEventEmitter do
     {:ok, %{}}
   end
 
-  @doc """
-  Create a new record for both of the 15 second interval tables, and schedule another call in 15 more seconds.
-  Attempts to keep the data smooth so that we can test the UI animations and such. Don't change by too much, try and have sensible values.
-  """
+  # Create a new record for both of the 15 second interval tables, and schedule another call in 15 more seconds.
+  # Attempts to keep the data smooth so that we can test the UI animations and such. Don't change by too much, try and have sensible values.
+  @impl true
   def handle_info(:fifteensec, state) do
     # Process a new FifteensecondRainTemp
     previousFifteensecRaintemp = case :ets.lookup(@table, :fifteensec_raintemp) do
@@ -67,10 +67,9 @@ defmodule WeatherMoss.MeteobridgeSQL.FakeEventEmitter do
     {:noreply, state}
   end
 
-  @doc """
-  Create a new record for the 10 minute interval table, and schedule another one to be created in 10 more minutes.
-  Attempts to have reasonable values and keep tha data fairly smooth by not changing more than is reasonable in a 10-minute period in the real world.
-  """
+  # Create a new record for the 10 minute interval table, and schedule another one to be created in 10 more minutes.
+  # Attempts to have reasonable values and keep tha data fairly smooth by not changing more than is reasonable in a 10-minute period in the real world.
+  @impl true
   def handle_info(:tenminute, state) do
     # Process a new TenminuteAll
     previousTenminuteAll = case :ets.lookup(@table, :tenminute_all) do
