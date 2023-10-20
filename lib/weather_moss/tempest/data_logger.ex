@@ -1,4 +1,4 @@
-defmodule WeatherMoss.Tempest.Logger do
+defmodule WeatherMoss.Tempest.DataLogger do
   @moduledoc """
     Takes the data from any Tempest device it hears on the network and saves
     the data to a database.
