@@ -42,6 +42,7 @@ defmodule WeatherMoss.Application do
       |> List.insert_at(-2, WeatherMoss.FakeMeteobridgeSQLEvents)
       |> List.insert_at(-2, WeatherMoss.FakeMeteobridgeHTTPEvents)
       |> List.insert_at(-2, WeatherMoss.FakePurpleairData)
+      |> List.insert_at(-2, WeatherMoss.FakeTempestEvents)
     else
       children
     end
