@@ -39,10 +39,11 @@ defmodule WeatherMoss.Application do
     # TODO: Should we separate these out into their own config values so you can enable them individually?
     if Application.get_env(:weather_moss, :enable_fake_meteobridge_emitter) do
       children
+      |> List.insert_at(-2, WeatherMoss.FakeWeather)
       |> List.insert_at(-2, WeatherMoss.FakeMeteobridgeSQLEvents)
       |> List.insert_at(-2, WeatherMoss.FakeMeteobridgeHTTPEvents)
-      |> List.insert_at(-2, WeatherMoss.FakePurpleairData)
       |> List.insert_at(-2, WeatherMoss.FakeTempestEvents)
+      |> List.insert_at(-2, WeatherMoss.FakePurpleairData)
     else
       children
     end

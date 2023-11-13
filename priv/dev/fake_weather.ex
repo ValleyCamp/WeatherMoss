@@ -47,9 +47,14 @@ defmodule WeatherMoss.FakeWeather do
 #             }
 
   use GenServer
+  require Logger
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+  end
+
+  def get_weather() do
+    GenServer.call(__MODULE__, {:get_weather})
   end
 
   @impl true
@@ -66,7 +71,7 @@ defmodule WeatherMoss.FakeWeather do
       # which other values depend.
       |> Map.put(:fake_time, state.latest.fake_time |> Time.add(10, :minute))
       |> Map.put(:ticks_since_cloudcover_change, state.latest.ticks_since_cloudcover_change + 1)
-      |> Map.put(:ticks_since_wind_event_started, state.latest.ticks_since_wind_event_started +1)
+      |> Map.put(:ticks_since_wind_event_started, state.latest.ticks_since_wind_event_started + 1)
       |> Map.put(:ticks_since_rain_event_started, state.latest.ticks_since_rain_event_started + 1)
       |> Map.put(:ticks_since_lightning_event_started, state.latest.ticks_since_lightning_event_started + 1)
       # Next we're going to update any of our overarching state trackers,
@@ -91,13 +96,13 @@ defmodule WeatherMoss.FakeWeather do
   end
 
   @impl true
-  def handle_call(:get_weather, _from, state) do
+  def handle_call({:get_weather}, _from, state) do
     {:reply, state.latest, state}
   end
 
   # Generates a new weather object from scratch, not based on any previous data
   defp random_weather() do
-    fake_time = Time.new(Enum.random(0..23), Enum.random(0..5)*10, 0, 0)
+    fake_time = Time.new!(Enum.random(0..23), Enum.random(0..5)*10, 0, 0)
     min_temp_F = Enum.random(25..50)
     max_temp_F = min_temp_F + Enum.random(5..30) # Daily temp has to go up and down by at least 5, but not more than 30
 
@@ -106,9 +111,9 @@ defmodule WeatherMoss.FakeWeather do
     |> Map.put(:fake_today,
          %{
            # We could randomize these, but for now we're just going to make every day the same.
-           sunrise: Time.new(6, 0, 0, 0),
-           sunset: Time.new(20, 0, 0, 0),
-           solar_noon: Time.new(13, 0, 0, 0),
+           sunrise: Time.new!(6, 0, 0, 0),
+           sunset: Time.new!(20, 0, 0, 0),
+           solar_noon: Time.new!(13, 0, 0, 0),
            # Build some max/min parameters for the day, so we can have a consistent rise/fall
            peak_illuminance: Enum.random(20_000..160_000),
            min_temp_F: min_temp_F,
@@ -119,7 +124,6 @@ defmodule WeatherMoss.FakeWeather do
     |> Map.put(:ticks_since_wind_event_started, 0)
     |> Map.put(:ticks_since_rain_event_started, 0)
     |> Map.put(:ticks_since_lightning_event_started, 0)
-    |> Map.put(:cloudcover_pct, Enum.random(0..100))
     |> alter_base_illuminance_for_time()
     |> alter_cloudcover()
     |> alter_base_temp_F_for_time()
@@ -169,8 +173,9 @@ defmodule WeatherMoss.FakeWeather do
         |> (fn s -> %{s| max_temp_F: s.min_temp_F + Enum.random(5..30)} end).()
         |> Map.put(:pressure_direction, Enum.random([-1, 0, 1]))
 
-        %{state| fake_today: new_fake_day,
-                 base_humidity_pct: Enum.random(50..60)}
+      state
+      |> Map.put(:fake_today, new_fake_day)
+      |> Map.put(:base_humidity_pct, Enum.random(50..60))
     else
       state
     end
@@ -182,13 +187,14 @@ defmodule WeatherMoss.FakeWeather do
     # and then fall steadily back to zero at state.fake_today.sunset.
     base_illuminance = case state.fake_time do
       time when time < state.fake_today.sunrise -> 0
-      time when time < state.fake_today.solar_noon -> (time - state.fake_today.sunrise) / (state.fake_today.solar_noon - state.fake_today.sunrise) * state.fake_today.peak_illuminance
-      time when time < state.fake_today.sunset -> (time - state.fake_today.sunset) / (state.fake_today.solar_noon - state.fake_today.sunrise) * state.fake_today.peak_illuminance
+      time when time < state.fake_today.solar_noon -> (state.fake_today.peak_illuminance / (Time.diff(state.fake_today.solar_noon, state.fake_today.sunrise, :minute)/10)) * (Time.diff(state.fake_today.sunrise, time, :minute)/10) # ((peak illuminance at noon) / (number of steps between sunrise and noon)) * (Number of steps since sunrise)
+      time when time < state.fake_today.sunset -> (state.fake_today.peak_illuminance / (Time.diff(state.fake_today.sunset, state.fake_today.solar_noon, :minute)/10)) * (Time.diff(state.fake_today.solar_noon, time, :minute)/10) # ((peak illuminance at noon) / (number of steps between noon and sunset)) * (Number of steps since noon)
       _ -> 0
     end
 
     # Finally, we'll add the illuminance to the state and return the modified state.
-    %{state| base_illuminance: base_illuminance}
+    state
+    |> Map.put(:base_illuminance, base_illuminance)
   end
 
   defp alter_base_temp_F_for_time(state) do
@@ -198,22 +204,24 @@ defmodule WeatherMoss.FakeWeather do
     # After state.fake_today.sunrise the temp should rise consistently until it reaches state.fake_today.max_temp_F at
     # 2 hours before state.fake_today.sunset, after which in should fall consistently until sunrise.
     peak_temp_time = state.fake_today.sunset |> Time.add(-2, :hour)
+    cur = Map.get(state, :base_temp_F, Enum.random(state.fake_today.min_temp_F..state.fake_today.max_temp_F))
     diff_per_tick = case state.fake_time do
       time when time < state.fake_today.sunrise ->
         ticks_to_sunrise = Time.diff(state.fake_today.sunrise, state.fake_time, :minute)/10
-        (state.temp_F - state.fake_today.min_temp_F) / ticks_to_sunrise
+        (cur - state.fake_today.min_temp_F) / ticks_to_sunrise
       time when time < peak_temp_time ->
         ticks_to_peak = Time.diff(peak_temp_time, state.fake_time, :minute)/10
-        (state.temp_F + state.fake_today.max_temp_F) / ticks_to_peak
+        (cur + state.fake_today.max_temp_F) / ticks_to_peak
       time when time > peak_temp_time ->
-        ticks_to_midnight = Time.diff(Time.new(0,0,0,0), state.fake_time, :minute)/10
-        (state.temp_F - state.fake_today.min_temp_F) / ticks_to_midnight
+        ticks_to_midnight = Time.diff(Time.new!(0,0,0,0), state.fake_time, :minute)/10
+        (cur - state.fake_today.min_temp_F) / ticks_to_midnight
       _ ->
         Logger.error("altering base_temp_F hit a snag. This was the fault of the programmer.")
         0
     end
 
-    %{state| base_temp_F: state.base_temp_F + diff_per_tick}
+    state
+    |> Map.put(:base_temp_F, cur + diff_per_tick)
   end
 
   defp alter_base_humidity_pct(state) do
@@ -223,20 +231,20 @@ defmodule WeatherMoss.FakeWeather do
 
   defp alter_cloudcover(state) do
     r = %{
-      cloudcover_pct: state.cloudcover_pct,
+      cloudcover_pct: Map.get(state, :cloudcover_pct, Enum.random(0..100)),
       ticks_since_cloudcover_change: state.ticks_since_cloudcover_change
     }
     randomly_change_after = Enum.random(10..20)
 
     r = case r.ticks_since_cloudcover_change do
-      count when count > randomly_change_after ->
+      ticks when ticks > randomly_change_after ->
         %{
           cloudcover_pct: add_random_with_limit(r.cloudcover_pct, 45..85, 0..100),
           ticks_since_cloudcover_change: 0
         }
-      count ->
+      _ticks ->
         %{
-          cloudcover_pct: add_random_with_limit(r.fake_cloudcover_pct, [-10, -5, 0, 5, 10], 0..100),
+          cloudcover_pct: add_random_with_limit(r.cloudcover_pct, [-10, -5, 0, 5, 10], 0..100),
           ticks_since_cloudcover_change: r.ticks_since_cloudcover_change+1
         }
     end
@@ -250,15 +258,18 @@ defmodule WeatherMoss.FakeWeather do
   defp calc_illuminance(state) do
     # Calculate the true current illuminance value, based on the base_illuminance and the cloudcover_pct.
     # (If the cloudcover is 100, the illuminance should be reduced by half.)
-    %{state| illuminance: state.base_illuminance * ((1 - (state.cloudcover_pct / 100)) * 0.5)}
+    state
+    |> Map.put(:illuminance, state.base_illuminance * ((1 - (state.cloudcover_pct / 100)) * 0.5))
   end
 
   defp calc_uv_index(state) do
-    %{state| uv_index: uv_from_illuminance(state.illuminance)}
+    state
+    |> Map.put(:uv_index, uv_from_illuminance(state.illuminance))
   end
 
   defp calc_wm2(state) do
-    %{state| wm2: wm2_from_illuminance(state.illuminance)}
+    state
+    |> Map.put(:wm2, wm2_from_illuminance(state.illuminance))
   end
 
   defp calc_rain(state) do
@@ -275,19 +286,24 @@ defmodule WeatherMoss.FakeWeather do
       _c -> 0
     end
 
-    %{state| temp_F: state.base_temp_F * cloudcover_temp_F_modifier}
+    state
+    |> Map.put(:temp_F, state.base_temp_F * cloudcover_temp_F_modifier)
   end
 
   defp calc_humidity_pct(state) do
-    initial = state.base_humidity_pct || Enum.random(50..60)
+    initial = Map.get(state, :base_humidity_pct, Enum.random(50..60))
     cloudcover_contribution = Float.round(state.cloudcover_pct * 0.2, 2)
     # TODO: rain_contribution = ...
-    %{state| humidity_pct: initial + cloudcover_contribution}
+
+    state
+    |> Map.put(:humidity_pct, initial + cloudcover_contribution)
   end
 
   defp calc_pressure_inHg(state) do
-    initial = state.pressure_inHg || 30.0
-    %{state| pressure_inHg: initial + ((Enum.random(0..10) * 0.01) * state.fake_today.pressure_dir)}
+    initial = Map.get(state, :pressure_inHg, 30.0)
+
+    state
+    |> Map.put(:pressure_inHg, initial + ((Enum.random(0..10) * 0.01) * state.fake_today.pressure_dir))
   end
 
   #####
@@ -306,20 +322,20 @@ defmodule WeatherMoss.FakeWeather do
 
     #slope = (x_sum_y_sum - x_mean_y_mean) / (x_sq_mean - x_mean_sq)
     #intercept = y_mean - (slope * x_mean)
-    
+
+    n = length(xs)
     sum_x = Enum.sum(xs)
     sum_y = Enum.sum(ys)
-    sum_xy = Enum.zip(xs, ys) |> Enum.map(fn {x,y} -> x*y end) |> Enum.sum()
-    sum_x2 = Enum.map(xs, fn x -> :math.pow(x, 2) end) |> Enum.sum()
-    sum_y2 = Enum.map(ys, fn y -> :math.pow(y, 2) end) |> Enum.sum()
-    n = length(xs)
-    slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - :math.pow(sum_x, 2))
-    intercept = (sum_y - slope * sum_x)
+    sum_xy = Enum.zip(xs, ys) |> Enum.reduce(0, fn {x, y}, acc -> acc + x * y end)
+    sum_x2 = Enum.reduce(xs, 0, fn x, acc -> acc + x * x end)
+
+    slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x)
+    intercept = (sum_y - slope * sum_x) / n
 
     {slope, intercept}
   end
 
-  defp uv_from_illuminance(illuminance) do
+  def uv_from_illuminance(illuminance) do
     # Some values based on the VC weather station:
     illuminances = [2537, 11441, 62558, 97850, 125_000, 146_000]
     uvs = [2.8, 3.8, 5.8, 7.8, 9, 10]
@@ -327,7 +343,7 @@ defmodule WeatherMoss.FakeWeather do
     m * illuminance + b
   end
 
-  defp wm2_from_illuminance(illuminance) do
+  def wm2_from_illuminance(illuminance) do
     # Some values based on the VC weather station:
     illuminances = [2537, 11441, 62558, 97850, 125_000, 146_000]
     wm2s = [51, 258, 522, 816, 1044, 1217]
