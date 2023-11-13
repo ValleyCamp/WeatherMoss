@@ -19,8 +19,8 @@ DEV_DATABASE_NAME="weathermoss_dev"
 
 
 if [[ -z $CONTAINER_ENGINE ]] ; then
-  if [ ! command -v podman &> /dev/null ]; then
-    if [ ! command -v docker &> /dev/null ]; then
+  if ! command -v podman &> /dev/null; then
+    if ! command -v docker &> /dev/null; then
       echo "Neither podman nor docker could be found, aborting."
       exit 1
     else
@@ -30,6 +30,7 @@ if [[ -z $CONTAINER_ENGINE ]] ; then
     CONTAINER_ENGINE="podman"
   fi
 fi
+
 
 function getContainerStatus(){
   CONTAINER_ID=$($CONTAINER_ENGINE ps -a | grep -v Exit | grep $CONTAINER_NAME | awk '{print $1}')
