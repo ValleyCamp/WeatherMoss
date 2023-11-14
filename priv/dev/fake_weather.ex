@@ -53,7 +53,7 @@ defmodule WeatherMoss.FakeWeather do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
-  def get_weather() do
+  def current() do
     GenServer.call(__MODULE__, {:get_weather})
   end
 
@@ -140,24 +140,29 @@ defmodule WeatherMoss.FakeWeather do
   # This iteration of the function can accept a random_from function that returns either a number or a range.
   # If it returns a number, it will be added to the base value and then checked against the limit_range.
   # If it returns a range, it will randomly pick a value from that range and then add it to the base value and then check against the limit_range.
-  defp add_random_with_limit(base, random_fun, limit_range) when is_function(random_fun) do
+  # It is a limitation that we're using ranges, so we can only limit inside integer ranges, but that should be fine for the use-case.
+  defp add_random_with_limit(base, random_fun, %Range{} = limit_range) when is_function(random_fun) do
     rnd = random_fun.()
     add_random_with_limit(base, rnd, limit_range)
   end
-  defp add_random_with_limit(base, random_from, limit_range) when is_list(random_from) do
+  defp add_random_with_limit(base, random_from, %Range{} = limit_range) when is_list(random_from) do
     rand_val = Enum.random(random_from)
     add_random_with_limit(base, rand_val, limit_range)
   end
-  defp add_random_with_limit(base, {rand_start, rand_end, decimal_places}, limit_range) do
+  defp add_random_with_limit(base, %Range{} = random_range, %Range{} = limit_range) do
+    rand_val = Enum.random(random_range)
+    add_random_with_limit(base, rand_val, limit_range)
+  end
+  defp add_random_with_limit(base, {rand_start, rand_end, decimal_places}, %Range{} = limit_range) do
     rand_val = Float.round(:rand.uniform() * (rand_end - rand_start) + rand_start, decimal_places)
     add_random_with_limit(base, rand_val, limit_range)
   end
   # Note that this is the final fall-through of the function, and does not actually do anything random, just adds and checks.
-  defp add_random_with_limit(base, chosen_random_value, limit_range) when is_number(chosen_random_value) do
+  defp add_random_with_limit(base, chosen_random_value, %Range{} = limit_range) when is_number(chosen_random_value) do
     res = base + chosen_random_value
     case res do
-      val when val < limit_range.min -> limit_range.min
-      val when val > limit_range.max -> limit_range.max
+      val when val < limit_range.first -> limit_range.first
+      val when val > limit_range.last -> limit_range.last
       val -> val
     end
   end
