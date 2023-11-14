@@ -110,13 +110,13 @@ defmodule WeatherMossWeb.Support.GaugeLine do
 
   @spec length_between_scale_values(GaugeLine.t(), float, float) :: float
   def length_between_scale_values(%GaugeLine{scaleTopVal: scaleTop} = _, _, endVal)
-    when endVal > scaleTop, do: raise ArgumentError, message: "Requested ending value above scale range (#{endVal} > #{scaleTop})"
+    when endVal > scaleTop, do: raise(ArgumentError, message: "Requested ending value above scale range (#{endVal} > #{scaleTop})")
   def length_between_scale_values(%GaugeLine{scaleBottomVal: scaleBottom} = _, _, endVal)
-    when endVal < scaleBottom, do: raise ArgumentError, message: "Requested ending value below scale range (#{endVal} < #{scaleBottom})"
+    when endVal < scaleBottom, do: raise(ArgumentError, message: "Requested ending value below scale range (#{endVal} < #{scaleBottom})")
   def length_between_scale_values(%GaugeLine{scaleTopVal: scaleTop} = _, startVal, _)
-    when startVal > scaleTop, do: raise ArgumentError, message: "Requested starting value above scale range (#{startVal} > #{scaleTop})"
+    when startVal > scaleTop, do: raise(ArgumentError, message: "Requested starting value above scale range (#{startVal} > #{scaleTop})")
   def length_between_scale_values(%GaugeLine{scaleBottomVal: scaleBottom} = _, startVal, _)
-    when startVal < scaleBottom, do: raise ArgumentError, message: "Requested starting value below scale range (#{startVal} < #{scaleBottom})"
+    when startVal < scaleBottom, do: raise(ArgumentError, message: "Requested starting value below scale range (#{startVal} < #{scaleBottom})")
   def length_between_scale_values(%GaugeLine{} = line, startScaleVal, endScaleVal) do
     ps = y_for_scale_value(line, startScaleVal)
     pe = y_for_scale_value(line, endScaleVal)
@@ -126,9 +126,9 @@ defmodule WeatherMossWeb.Support.GaugeLine do
 
   @spec y_for_scale_value(GagueLine.t(), float) :: float
   def y_for_scale_value(%GaugeLine{scaleTopVal: scaleTop} = _, scaleVal) 
-    when scaleVal > scaleTop, do: raise ArgumentError, message: "Requested scaleValue outside of scale range. (#{scaleVal} > #{scaleTop})"
+    when scaleVal > scaleTop, do: raise(ArgumentError, message: "Requested scaleValue outside of scale range. (#{scaleVal} > #{scaleTop})")
   def y_for_scale_value(%GaugeLine{scaleBottomVal: scaleBottom} = _, scaleVal) 
-    when scaleVal < scaleBottom, do: raise ArgumentError, message: "Requested scaleValue outside of scale range. (#{scaleVal} < #{scaleBottom})"
+    when scaleVal < scaleBottom, do: raise(ArgumentError, message: "Requested scaleValue outside of scale range. (#{scaleVal} < #{scaleBottom})")
   def y_for_scale_value(%GaugeLine{} = line, scaleVal) do
     gauge_steps = line.height / (line.scaleTopVal - line.scaleBottomVal)
     line.topY + ((line.scaleTopVal - scaleVal) * gauge_steps)

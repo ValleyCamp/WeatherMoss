@@ -33,7 +33,7 @@ defmodule WeatherMossWeb.Support.GaugeArc do
     svg_fill_path_string: "",
     main_label_text_y: 225.0,
     main_label_text: "Units",
-    html_id: "unit_arc_gague",
+    html_id: "unit_arc_gauge",
     svg_width: 250,
     svg_height: 275,
     windDirCur: 0.00,
@@ -79,7 +79,7 @@ defmodule WeatherMossWeb.Support.GaugeArc do
     windIndicatorTransparency: float,
   }
 
-  def populate_from_models(arc, latest, scale_vals) do
+  def populate_from_models(_arc, _latest, _scale_vals) do
     # TODO: Should move the code from build_assigns to here to DRY it up
   end
 
@@ -128,9 +128,9 @@ defmodule WeatherMossWeb.Support.GaugeArc do
     (2 * :math.pi * arc.radius) * (interior_angle/360)
   end
 
-  def percent_for_value_on_scale(%GaugeArc{scaleBottomVal: sbv} = arc, val)
+  def percent_for_value_on_scale(%GaugeArc{scaleBottomVal: sbv} = _arc, val)
     when val < sbv, do: raise(ArgumentError, message: "Requested Value below bottom of GaugeArc's scale")
-  def percent_for_value_on_scale(%GaugeArc{scaleTopVal: stv} = arc, val)
+  def percent_for_value_on_scale(%GaugeArc{scaleTopVal: stv} = _arc, val)
     when val > stv, do: raise(ArgumentError, message: "Requested Value above top of GaugeArc's scale")
   def percent_for_value_on_scale(%GaugeArc{scaleBottomVal: sbv, scaleTopVal: stv}, val) do
     ((val - sbv) / (stv - sbv)) * 100

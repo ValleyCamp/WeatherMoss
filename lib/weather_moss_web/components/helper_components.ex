@@ -6,10 +6,8 @@ defmodule WeatherMossWeb.HelperComponents do
   """
   use Phoenix.Component
   use Timex
-
-  alias Phoenix.LiveView.JS
-  import WeatherMossWeb.Gettext
-
+  #alias Phoenix.LiveView.JS
+  #import WeatherMossWeb.Gettext
 
   def datetime_format(datetime) do
     Timezone.convert(datetime, Application.get_env(:weather_moss, :site_tz))

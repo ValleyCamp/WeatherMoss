@@ -11,8 +11,8 @@ defmodule WeatherMossWeb.WidgetComponents do
   '''
   """
   use Phoenix.Component
-  import WeatherMossWeb.Gettext
-  alias Phoenix.LiveView.JS
+  #import WeatherMossWeb.Gettext
+  #alias Phoenix.LiveView.JS
   alias WeatherMossWeb.Support.{GaugeLine,GaugeArc}
 
   attr :gaugeLine, GaugeLine, required: true

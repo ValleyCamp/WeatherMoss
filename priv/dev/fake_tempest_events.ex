@@ -11,7 +11,7 @@ defmodule WeatherMoss.FakeTempestEvents do
   """
 
   use GenServer
-  alias WeatherMoss.Tempest.DataLogger, as: TDL
+  #alias WeatherMoss.Tempest.DataLogger, as: TDL
 
   @table :tempest_fake_events_cache
 
