@@ -1,7 +1,12 @@
 import Config
 
-# Enable the fake meteobridge data being inserted into the DB in dev mode
-config :weather_moss, enable_fake_meteobridge_emitter: true
+# Disable the weatherflow tempest udp listener in dev mode, as we'll prefer our fake emitter instead.
+# You can change this, and instead disable the fake emitter in application.ex if you have a Weatherflow device
+# available in the dev environment.
+config :weatherflow_tempest, callbacks_only: true
+
+# Enable the fake weather stations so we can test the GUI without having real devices available.
+config :weather_moss, enable_fake_weather_stations: true
 
 config :weather_moss, WeatherMoss.Scheduler,
  jobs: [
