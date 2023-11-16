@@ -49,6 +49,9 @@ defmodule WeatherMoss.FakeWeather do
   use GenServer
   require Logger
 
+  #####
+  # Genserver Client
+
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
@@ -56,6 +59,9 @@ defmodule WeatherMoss.FakeWeather do
   def current() do
     GenServer.call(__MODULE__, {:get_weather})
   end
+
+  #####
+  # Genserver Server
 
   @impl true
   def init(_opts) do
@@ -74,22 +80,7 @@ defmodule WeatherMoss.FakeWeather do
       |> Map.put(:ticks_since_wind_event_started, state.latest.ticks_since_wind_event_started + 1)
       |> Map.put(:ticks_since_rain_event_started, state.latest.ticks_since_rain_event_started + 1)
       |> Map.put(:ticks_since_lightning_event_started, state.latest.ticks_since_lightning_event_started + 1)
-      # Next we're going to update any of our overarching state trackers,
-      # which depend on the incrementing values before, but upon which the actual
-      # data itself will depend.
-      |> reset_day_if_needed()
-      |> alter_base_illuminance_for_time()
-      |> alter_cloudcover()
-      |> alter_base_temp_F_for_time()
-      |> alter_base_humidity_pct()
-      # Now we can updated the actual data fields.
-      |> calc_illuminance()
-      |> calc_uv_index()
-      |> calc_wm2()
-      |> calc_rain()
-      |> calc_temp_F()
-      |> calc_humidity_pct()
-      |> calc_pressure_inHg()
+      |> do_tick_weather_changes()
 
     Process.send_after(self(), :weather_loop, 10_000)
     {:noreply, %{state | latest: new_state}}
@@ -100,6 +91,9 @@ defmodule WeatherMoss.FakeWeather do
     {:reply, state.latest, state}
   end
 
+  #####
+  # Top-Level entrypoint functions and helpers
+  
   # Generates a new weather object from scratch, not based on any previous data
   defp random_weather() do
     fake_time = Time.new!(Enum.random(0..23), Enum.random(0..5)*10, 0, 0)
@@ -124,10 +118,20 @@ defmodule WeatherMoss.FakeWeather do
     |> Map.put(:ticks_since_wind_event_started, 0)
     |> Map.put(:ticks_since_rain_event_started, 0)
     |> Map.put(:ticks_since_lightning_event_started, 0)
+    |> do_tick_weather_changes()
+  end
+
+  defp do_tick_weather_changes(latest) do
+    latest
+    # First update any of our overarching state trackers,
+    # which depend on the incrementing values before, but upon which the actual
+    # data itself will depend.
+    |> reset_day_if_needed()
     |> alter_base_illuminance_for_time()
     |> alter_cloudcover()
     |> alter_base_temp_F_for_time()
     |> alter_base_humidity_pct()
+    # Now we can updated the actual data fields.
     |> calc_illuminance()
     |> calc_uv_index()
     |> calc_wm2()
@@ -137,35 +141,10 @@ defmodule WeatherMoss.FakeWeather do
     |> calc_pressure_inHg()
   end
 
-  # This iteration of the function can accept a random_from function that returns either a number or a range.
-  # If it returns a number, it will be added to the base value and then checked against the limit_range.
-  # If it returns a range, it will randomly pick a value from that range and then add it to the base value and then check against the limit_range.
-  # It is a limitation that we're using ranges, so we can only limit inside integer ranges, but that should be fine for the use-case.
-  defp add_random_with_limit(base, random_fun, %Range{} = limit_range) when is_function(random_fun) do
-    rnd = random_fun.()
-    add_random_with_limit(base, rnd, limit_range)
-  end
-  defp add_random_with_limit(base, random_from, %Range{} = limit_range) when is_list(random_from) do
-    rand_val = Enum.random(random_from)
-    add_random_with_limit(base, rand_val, limit_range)
-  end
-  defp add_random_with_limit(base, %Range{} = random_range, %Range{} = limit_range) do
-    rand_val = Enum.random(random_range)
-    add_random_with_limit(base, rand_val, limit_range)
-  end
-  defp add_random_with_limit(base, {rand_start, rand_end, decimal_places}, %Range{} = limit_range) do
-    rand_val = Float.round(:rand.uniform() * (rand_end - rand_start) + rand_start, decimal_places)
-    add_random_with_limit(base, rand_val, limit_range)
-  end
-  # Note that this is the final fall-through of the function, and does not actually do anything random, just adds and checks.
-  defp add_random_with_limit(base, chosen_random_value, %Range{} = limit_range) when is_number(chosen_random_value) do
-    res = base + chosen_random_value
-    case res do
-      val when val < limit_range.first -> limit_range.first
-      val when val > limit_range.last -> limit_range.last
-      val -> val
-    end
-  end
+
+  #####
+  # Functions for changing the "base" values that represent the state of the world and will impact
+  # the actual calculated values.
 
   defp reset_day_if_needed(state) do
     # A new day means we need to calculate the new min/max values for the day, which our later values
@@ -230,8 +209,12 @@ defmodule WeatherMoss.FakeWeather do
   end
 
   defp alter_base_humidity_pct(state) do
-    # TODO: !!
+    initial = Map.get(state, :base_humidity_pct, Enum.random(50..60))
+
+    #TODO: Randomize change here, based on.... ?
+
     state
+    |> Map.put(:base_humidity_pct, initial)
   end
 
   defp alter_cloudcover(state) do
@@ -256,6 +239,7 @@ defmodule WeatherMoss.FakeWeather do
 
     Map.merge(state, r)
   end
+
 
   #####
   # These functions are the ones that actually calculate the "true" values for the current weather.
@@ -311,23 +295,44 @@ defmodule WeatherMoss.FakeWeather do
     |> Map.put(:pressure_inHg, initial + ((Enum.random(0..10) * 0.01) * state.fake_today.pressure_dir))
   end
 
+
   #####
   # Helper functions that are used by the above functions
+
+  # This iteration of the function can accept a random_from function that returns either a number or a range.
+  # If it returns a number, it will be added to the base value and then checked against the limit_range.
+  # If it returns a range, it will randomly pick a value from that range and then add it to the base value and then check against the limit_range.
+  # It is a limitation that we're using ranges, so we can only limit inside integer ranges, but that should be fine for the use-case.
+  defp add_random_with_limit(base, random_fun, %Range{} = limit_range) when is_function(random_fun) do
+    rnd = random_fun.()
+    add_random_with_limit(base, rnd, limit_range)
+  end
+  defp add_random_with_limit(base, random_from, %Range{} = limit_range) when is_list(random_from) do
+    rand_val = Enum.random(random_from)
+    add_random_with_limit(base, rand_val, limit_range)
+  end
+  defp add_random_with_limit(base, %Range{} = random_range, %Range{} = limit_range) do
+    rand_val = Enum.random(random_range)
+    add_random_with_limit(base, rand_val, limit_range)
+  end
+  # This version accepts an input tuple that allows us to define a range, generate a float within that range, and round to given decimal precision.
+  defp add_random_with_limit(base, {rand_start, rand_end, decimal_places}, %Range{} = limit_range) do
+    rand_val = Float.round(:rand.uniform() * (rand_end - rand_start) + rand_start, decimal_places)
+    add_random_with_limit(base, rand_val, limit_range)
+  end
+  # Note that this is the final fall-through of the function, and does not actually do anything random, just adds and checks.
+  defp add_random_with_limit(base, chosen_random_value, %Range{} = limit_range) when is_number(chosen_random_value) do
+    res = base + chosen_random_value
+    case res do
+      val when val < limit_range.first -> limit_range.first
+      val when val > limit_range.last -> limit_range.last
+      val -> val
+    end
+  end
 
   defp calculate_slope_intercept(xs, ys) do
     # Return a tuple of {slope, intercept} for the given xs and ys
     # For now, assume that xs and ys are the same length
-    #n = length(xs)
-    #x_mean = Enum.sum(xs) / n
-    #y_mean = Enum.sum(ys) / n
-    #x_mean_sq = x_mean * x_mean
-    #x_mean_y_mean = x_mean * y_mean
-    #x_sq_mean = Enum.sum(Enum.map(xs, fn x -> x * x end)) / n
-    #x_sum_y_sum = Enum.sum(Enum.map(xs, fn x -> x * y end)) / n
-
-    #slope = (x_sum_y_sum - x_mean_y_mean) / (x_sq_mean - x_mean_sq)
-    #intercept = y_mean - (slope * x_mean)
-
     n = length(xs)
     sum_x = Enum.sum(xs)
     sum_y = Enum.sum(ys)
