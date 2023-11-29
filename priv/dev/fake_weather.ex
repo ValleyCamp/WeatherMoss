@@ -29,7 +29,9 @@ defmodule WeatherMoss.FakeWeather do
 #            humidity_pct: nil,
 #            pressure_inHg: nil,
 #            uv_index: nil,
-#            wm2: nil
+#            wm2: nil,
+#            wind_dir_deg: nil,
+#            wind_speed_mph: nil
 #
 #
 #  @type t :: %__MODULE__{
@@ -52,10 +54,31 @@ defmodule WeatherMoss.FakeWeather do
 #               pressure_inHg: float(),
 #               uv_index: float()
 #               wm2: integer(),
+#               wind_dir_deg: integer(),
+#               wind_speed_mph: float(),
 #             }
 
   use GenServer
   require Logger
+
+  #####
+  # Non-Genserver public helper functions
+
+  def wind_dir_en(degrees) do
+    directions = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
+    segmentWidth = 360 / length(directions)
+
+    # Rotate the dial half a segment to counter clockwise, so that "north" covers a full segment width centered on 0 degrees.
+    targetDirectionWithOffset = case ((0 - (segmentWidth/2)) + degrees) do
+      r when r < 0 -> r+360
+      r -> r
+    end
+
+    dirIndex =  div(trunc(targetDirectionWithOffset), trunc(segmentWidth))
+
+    Enum.at(directions, dirIndex)
+  end
+
 
   #####
   # Genserver Client
@@ -65,7 +88,7 @@ defmodule WeatherMoss.FakeWeather do
   end
 
   def current() do
-    GenServer.call(__MODULE__, {:get_weather})
+    GenServer.call(__MODULE__, {:current})
   end
 
   #####
@@ -94,7 +117,7 @@ defmodule WeatherMoss.FakeWeather do
   end
 
   @impl true
-  def handle_call({:get_weather}, _from, state) do
+  def handle_call({:current}, _from, state) do
     {:reply, state.latest, state}
   end
 
@@ -148,6 +171,7 @@ defmodule WeatherMoss.FakeWeather do
     |> calc_temp_F()
     |> calc_humidity_pct()
     |> calc_pressure_inHg()
+    |> calc_wind()
   end
 
 
@@ -364,6 +388,28 @@ defmodule WeatherMoss.FakeWeather do
     |> Map.put(:pressure_inHg, initial + ((Enum.random(0..10) * 0.01) * latest.fake_today.pressure_dir))
   end
 
+  defp calc_wind(latest) do
+    # Once we've hit 40 ticks we want to introduce some randomness
+    # to prevent the event from happening EXACTLY every 40 ticks.
+    new_event_target_tick = Enum.random(50..70)
+    event_length_ticks = Enum.random(15..25)
+    cur_dir_deg = Map.get(latest, :wind_dir_deg, Enum.random(1..360))
+
+    {new_ticks_since_last_event, new_wind_speed_mph, new_wind_deg} = case latest.ticks_since_wind_event_started do
+      tick when tick >= new_event_target_tick ->
+        {0, add_random_with_limit(15.0, {1.0, 10.0, 2}, 15..50), Enum.random(1..360)}
+      tick when tick >= event_length_ticks ->
+        {tick + 1, add_random_with_limit(2.5, {-1.0, 1.0, 2}, 0..50), degree_change_within_limit(cur_dir_deg, 5)}
+      tick ->
+        {tick + 1, add_random_with_limit(tick, {-1.0, 1.0, 2}, 0..50), degree_change_within_limit(cur_dir_deg, 15)}
+    end
+    
+    latest
+    |> Map.put(:wind_dir_deg, new_wind_deg)
+    |> Map.put(:wind_speed_mph, new_wind_speed_mph)
+    |> Map.put(:ticks_since_wind_event_started, new_ticks_since_last_event)
+  end
+
 
   #####
   # Helper functions that are used by the above functions
@@ -405,6 +451,14 @@ defmodule WeatherMoss.FakeWeather do
     end
   end
 
+  defp degree_change_within_limit(cur_deg, deg_limit) do
+    case cur_deg + Enum.random(-deg_limit..deg_limit) do
+      d when d > 360 -> d - 360
+      d when d < 1 -> d + 360
+      d -> d
+    end
+  end
+
   defp calculate_slope_intercept(xs, ys) do
     # Return a tuple of {slope, intercept} for the given xs and ys
     # For now, assume that xs and ys are the same length
@@ -420,7 +474,7 @@ defmodule WeatherMoss.FakeWeather do
     {slope, intercept}
   end
 
-  def uv_from_illuminance(illuminance) do
+  defp uv_from_illuminance(illuminance) do
     # Some values based on the VC weather station:
     illuminances = [2537, 11441, 62558, 97850, 125_000, 146_000]
     uvs = [2.8, 3.8, 5.8, 7.8, 9, 10]
@@ -428,7 +482,7 @@ defmodule WeatherMoss.FakeWeather do
     m * illuminance + b
   end
 
-  def wm2_from_illuminance(illuminance) do
+  defp wm2_from_illuminance(illuminance) do
     # Some values based on the VC weather station:
     illuminances = [2537, 11441, 62558, 97850, 125_000, 146_000]
     wm2s = [51, 258, 522, 816, 1044, 1217]
